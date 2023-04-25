@@ -1,24 +1,70 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetEye.MainPage">
+             x:Class="NetEye.MainPage" Visual="Material">
 
-    <StackLayout>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Label Text="Welcome to Xamarin.Forms!" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
-        </Frame>
-        <Label Text="Start developing now" FontSize="Title" Padding="30,10,30,10"/>
-        <Label Text="Make changes to your XAML file and save to see your UI update in the running app with XAML Hot Reload. Give it a try!" FontSize="16" Padding="30,0,30,0"/>
-        <Label FontSize="16" Padding="30,24,30,0">
-            <Label.FormattedText>
-                <FormattedString>
-                    <FormattedString.Spans>
-                        <Span Text="Learn more at "/>
-                        <Span Text="https://aka.ms/xamarin-quickstart" FontAttributes="Bold"/>
-                    </FormattedString.Spans>
-                </FormattedString>
-            </Label.FormattedText>
-        </Label>
-    </StackLayout>
+    <Frame Padding="6">
+        <Frame.Background>
+            <LinearGradientBrush EndPoint="0,1">
+                <GradientStop Color="white"
+                              Offset="0.5" />
+                <GradientStop Color="#E5EAFF"
+                              Offset="1.0"/>
+            </LinearGradientBrush>
+        </Frame.Background>
 
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="110"/>
+                <RowDefinition Height="200"/>
+                <RowDefinition Height="300"/>
+            </Grid.RowDefinitions>
+
+            <StackLayout Grid.Row="0">
+                <Label Text="Net - Eye" TextColor="Black" HorizontalOptions="Center" FontSize="48" Margin="0,5,0,0" FontFamily="Main_500" />
+                <Label Text="Mobile" HorizontalOptions="Center" FontSize="16" TextColor="#839BFF" FontFamily="Main"/>
+            </StackLayout>
+            <Image Grid.Row="1" Source="Resources/drawable/logoic.png" Margin="0,0,0,10"/>
+
+            <StackLayout Grid.Row="2">
+                <Frame HasShadow="True" Padding="0,10" VerticalOptions="StartAndExpand" BorderColor="#839BFF" CornerRadius="10">
+                    <StackLayout Padding="5">
+                        <Label Text="Авторизация" TextColor="Black" FontSize="22" FontFamily="Main" HorizontalOptions="Center"/>
+                        <Image Source="Resources/drawable/mainLine"/>
+
+                        <StackLayout Padding="10,5">
+                            <Frame Padding="0" CornerRadius="12" BackgroundColor="#F4F4F3">
+                                <Entry BackgroundColor="#F4F4F3" TextColor="Black" Margin="10,0" Visual="Material"
+                                       FontFamily="Main" PlaceholderColor="Gray" FontSize="18" Placeholder="Электронная почта"/>
+                            </Frame>
+                            <Frame Padding="0" CornerRadius="12" Margin="0,5,0,5" BackgroundColor="#F4F4F3">
+                                <Entry BackgroundColor="#F4F4F3" TextColor="Black" Margin="10,0"
+                                       FontFamily="Main" PlaceholderColor="Gray" IsPassword="True" Placeholder="Пароль"/>
+                            </Frame>
+                        </StackLayout>
+                        <StackLayout Orientation="Horizontal" Margin="10,0,10,10" Padding="0">
+                            <CheckBox Visual="Material"/>
+                            <Label FontFamily="Main" Text="Запомнить меня" TextColor="Black" FontSize="18" VerticalOptions="Center"/>
+                        </StackLayout>
+                        <Label Text="Нет аккаунта? Подайте заявку на регистрацию" TextColor="#839BFF" HorizontalOptions="Center" TextDecorations="Underline" FontFamily="Main">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+
+                    </StackLayout>
+                </Frame>
+
+                <ActivityIndicator IsRunning="True" VerticalOptions="Center" Color="#839BFF" IsVisible="false" x:Name="aiMain"/>
+                
+                <Frame Padding="0" HorizontalOptions="Center" CornerRadius="12" HasShadow="True">
+                    <Button VerticalOptions="StartAndExpand" CornerRadius="12" HorizontalOptions="Center"
+                        Text="Войти" FontFamily="Main" BackgroundColor="#839BFF" Padding="100,0" x:Name="btn_Auth" Clicked="btn_Auth_Clicked"/>
+                </Frame>
+                
+            </StackLayout>
+            
+        </Grid>
+        
+    </Frame>
 </ContentPage>
