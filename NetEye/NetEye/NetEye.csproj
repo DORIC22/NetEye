@@ -11,19 +11,32 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="res\font\Montserrat.ttf" />
-    <None Remove="res\font\Montserrat_500.ttf" />
+    <None Remove="res\font\Ubuntu-Bold.ttf" />
+    <None Remove="res\font\Ubuntu-BoldItalic.ttf" />
+    <None Remove="res\font\Ubuntu-Italic.ttf" />
+    <None Remove="res\font\Ubuntu-Light.ttf" />
+    <None Remove="res\font\Ubuntu-LightItalic.ttf" />
+    <None Remove="res\font\Ubuntu-Medium.ttf" />
+    <None Remove="res\font\Ubuntu-MediumItalic.ttf" />
+    <None Remove="res\font\Ubuntu-Regular.ttf" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="res\font\Montserrat.ttf" />
-    <EmbeddedResource Include="res\font\Montserrat_500.ttf" />
+    <EmbeddedResource Include="res\font\Ubuntu-Bold.ttf" />
+    <EmbeddedResource Include="res\font\Ubuntu-BoldItalic.ttf" />
+    <EmbeddedResource Include="res\font\Ubuntu-Italic.ttf" />
+    <EmbeddedResource Include="res\font\Ubuntu-Light.ttf" />
+    <EmbeddedResource Include="res\font\Ubuntu-LightItalic.ttf" />
+    <EmbeddedResource Include="res\font\Ubuntu-Medium.ttf" />
+    <EmbeddedResource Include="res\font\Ubuntu-MediumItalic.ttf" />
+    <EmbeddedResource Include="res\font\Ubuntu-Regular.ttf" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="RestSharp" Version="110.2.1-alpha.0.1" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2578" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.5" />
+    <PackageReference Include="Xamarin.Forms.Visual.Material" Version="5.0.0.2578" />
     <PackageReference Include="ZXing.Net.Mobile" Version="3.1.0-beta2" />
     <PackageReference Include="ZXing.Net.Mobile.Forms" Version="3.1.0-beta2" />
   </ItemGroup>

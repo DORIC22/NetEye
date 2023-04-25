@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetEye.MainPage" Visual="Material">
+             x:Class="NetEye.MainPage" 
+             Visual="Material">
 
     <Frame Padding="6">
         <Frame.Background>
@@ -17,51 +18,49 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="110"/>
                 <RowDefinition Height="200"/>
-                <RowDefinition Height="300"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
             <StackLayout Grid.Row="0">
-                <Label Text="Net - Eye" TextColor="Black" HorizontalOptions="Center" FontSize="48" Margin="0,5,0,0" FontFamily="Main_500" />
-                <Label Text="Mobile" HorizontalOptions="Center" FontSize="16" TextColor="#839BFF" FontFamily="Main"/>
+                <Label Text="Net - Eye" TextColor="Black" HorizontalOptions="Center" FontSize="48" Margin="0,5,0,0" FontFamily="ur"/>
+                <Label Text="Mobile" HorizontalOptions="Center" FontSize="16" TextColor="#839BFF" FontFamily="ur"/>
             </StackLayout>
             <Image Grid.Row="1" Source="Resources/drawable/logoic.png" Margin="0,0,0,10"/>
 
-            <StackLayout Grid.Row="2">
-                <Frame HasShadow="True" Padding="0,10" VerticalOptions="StartAndExpand" BorderColor="#839BFF" CornerRadius="10">
+            <StackLayout Grid.Row="2" VerticalOptions="Center">
+                <Frame HasShadow="True" Padding="0,10" VerticalOptions="StartAndExpand" BorderColor="#839BFF" CornerRadius="10" BackgroundColor="White">
                     <StackLayout Padding="5">
-                        <Label Text="Авторизация" TextColor="Black" FontSize="22" FontFamily="Main" HorizontalOptions="Center"/>
+                        <Label Text="Авторизация" TextColor="Black" FontSize="22" FontFamily="ur" HorizontalOptions="Center"/>
                         <Image Source="Resources/drawable/mainLine"/>
 
-                        <StackLayout Padding="10,5">
+                        <StackLayout Padding="10,0" >
                             <Frame Padding="0" CornerRadius="12" BackgroundColor="#F4F4F3">
                                 <Entry BackgroundColor="#F4F4F3" TextColor="Black" Margin="10,0" Visual="Material"
-                                       FontFamily="Main" PlaceholderColor="Gray" FontSize="18" Placeholder="Электронная почта"/>
+                                       FontFamily="ur" PlaceholderColor="Gray" FontSize="18" Placeholder="Электронная почта" x:Name="entry_Email" MaxLength="100" Keyboard="Email"/>
                             </Frame>
                             <Frame Padding="0" CornerRadius="12" Margin="0,5,0,5" BackgroundColor="#F4F4F3">
                                 <Entry BackgroundColor="#F4F4F3" TextColor="Black" Margin="10,0"
-                                       FontFamily="Main" PlaceholderColor="Gray" IsPassword="True" Placeholder="Пароль"/>
+                                       FontFamily="ur" PlaceholderColor="Gray" IsPassword="True" Placeholder="Пароль" x:Name="entry_Password" MaxLength="100" Keyboard="Text"/>
                             </Frame>
                         </StackLayout>
-                        <StackLayout Orientation="Horizontal" Margin="10,0,10,10" Padding="0">
+                        <StackLayout Orientation="Horizontal" Margin="10,-10,10,0" Padding="0">
                             <CheckBox Visual="Material"/>
-                            <Label FontFamily="Main" Text="Запомнить меня" TextColor="Black" FontSize="18" VerticalOptions="Center"/>
+                            <Label FontFamily="ur" Text="Запомнить меня" TextColor="Black" FontSize="16" VerticalOptions="Center"/>
                         </StackLayout>
-                        <Label Text="Нет аккаунта? Подайте заявку на регистрацию" TextColor="#839BFF" HorizontalOptions="Center" TextDecorations="Underline" FontFamily="Main">
+                        <Label Text="Нет аккаунта? Подайте заявку на регистрацию" TextColor="#839BFF" HorizontalOptions="Center" TextDecorations="Underline" FontFamily="ur">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="TapGestureRecognizer_Tapped"/>
                             </Label.GestureRecognizers>
                         </Label>
+                        <ActivityIndicator IsRunning="True" VerticalOptions="Center" Color="#839BFF" IsVisible="false" x:Name="aiMain" BackgroundColor="Black"/>
 
+                        <Button VerticalOptions="Start" CornerRadius="12" HorizontalOptions="Center" Visual="Material"
+                        Text="Войти" FontFamily="ur" BackgroundColor="#839BFF" Padding="100,0" x:Name="btn_Auth" Clicked="btn_Auth_Clicked"/>
                     </StackLayout>
                 </Frame>
 
-                <ActivityIndicator IsRunning="True" VerticalOptions="Center" Color="#839BFF" IsVisible="false" x:Name="aiMain"/>
                 
-                <Frame Padding="0" HorizontalOptions="Center" CornerRadius="12" HasShadow="True">
-                    <Button VerticalOptions="StartAndExpand" CornerRadius="12" HorizontalOptions="Center"
-                        Text="Войти" FontFamily="Main" BackgroundColor="#839BFF" Padding="100,0" x:Name="btn_Auth" Clicked="btn_Auth_Clicked"/>
-                </Frame>
-                
+
             </StackLayout>
             
         </Grid>

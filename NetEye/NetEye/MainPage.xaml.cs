@@ -36,19 +36,35 @@ namespace NetEye
 
         private async void btn_Auth_Clicked(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(entry_Email.Text) || string.IsNullOrEmpty(entry_Password.Text))
+            {
+                await DisplayAlert("Не верно заполнены поля", "Пожалуйста, введите почту и пароль", "Ок");
+                return;
+            }
+
+
             bool state = checkNetworkState();
             if (!state) {
                 await DisplayAlert("Упс", "Ошибка интернет соединения", "Ок");
                 return;
             }
+            #region при попытке авторизации
+            entry_Email.IsEnabled = false;
+            entry_Password.IsEnabled = false;
             aiMain.IsVisible = true;
+            btn_Auth.IsVisible= false;
+            #endregion
             await Task.Run(() =>
             {
+                //Процесс обращения к серверу
                 Thread.Sleep(5000);
             });
+            #region После попытки авторизации
             aiMain.IsVisible = false;
-
-
+            btn_Auth.IsVisible = true;
+            entry_Email.IsEnabled = true;
+            entry_Password.IsEnabled = true;
+            #endregion
 
         }
     }
