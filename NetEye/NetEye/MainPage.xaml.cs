@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetEye.pages;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace NetEye
         public MainPage()
         {
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         private async void TapGestureRecognizer_Tapped(object sender, EventArgs e)
@@ -57,7 +59,7 @@ namespace NetEye
             await Task.Run(() =>
             {
                 //Процесс обращения к серверу
-                Thread.Sleep(5000);
+                Thread.Sleep(1000);
             });
             #region После попытки авторизации
             aiMain.IsVisible = false;
@@ -66,6 +68,11 @@ namespace NetEye
             entry_Password.IsEnabled = true;
             #endregion
 
+            await Navigation.PushAsync(new userPage());
+            
+
         }
+
+        
     }
 }

@@ -10,7 +10,11 @@ namespace NetEye
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            //MainPage = new MainPage();
+            MainPage = new NavigationPage(new MainPage())
+            {
+                BarBackgroundColor = Color.FromHex("#839BFF")
+        };
         }
 
         protected override void OnStart()
