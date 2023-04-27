@@ -3,4 +3,6 @@
 	<uses-sdk android:minSdkVersion="20" android:targetSdkVersion="30" />
 	<application android:label="NetEye.Android" android:theme="@style/MainTheme" android:icon="@mipmap/launcher"></application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.FLASHLIGHT" />
 </manifest>

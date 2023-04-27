@@ -2,11 +2,18 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="NetEye.pages.userPage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+    <Frame Padding="6">
+        <Frame.Background>
+            <LinearGradientBrush EndPoint="0,1">
+                <GradientStop Color="white"
+                              Offset="0.5" />
+                <GradientStop Color="#E5EAFF"
+                              Offset="1.0"/>
+            </LinearGradientBrush>
+        </Frame.Background>
+        <Button x:Name="btnScan" Clicked="btnScan_Clicked" Text="scan" VerticalOptions="Center" HorizontalOptions="Center"/>
+    </Frame>
+    
+        
+    
 </ContentPage>

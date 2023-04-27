@@ -1,7 +1,10 @@
-﻿using System;
+﻿using NetEye.res.service;
+using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -25,12 +28,22 @@ namespace NetEye.pages
             titleView.Margin = new Thickness(0, 0, 15, 0);
             titleView.HorizontalOptions = LayoutOptions.FillAndExpand;
 
+            var exButton = new ImageButton()
+            {
+                Source = "res/image/ic_launcher.png",
+                WidthRequest = 45,
+                HeightRequest = 45,
+                BackgroundColor = Color.FromHex("#F4F4F3")                
+            };
+
+            exButton.Clicked += OnExButtonClicked;
+
             var titleLabel = new Label
             {
                 VerticalOptions = LayoutOptions.Center,
                 Text = "Net - Eye",
                 FontSize = 20,
-                TextColor = Color.White,
+                TextColor = Color.Black,
                 FontFamily = "ur"
             };
 
@@ -39,8 +52,9 @@ namespace NetEye.pages
                 HorizontalOptions = LayoutOptions.End,
                 Text = "Mobile",
                 FontSize = 12,
-                TextColor = Color.White,
-                FontFamily = "ur"
+                TextColor = Color.FromHex("#839BFF"),
+                FontFamily = "ur",
+                Margin = new Thickness(0,-5,0,0)
             };
             // Создаем новую картинку
             var iconImage = new Image
@@ -53,20 +67,47 @@ namespace NetEye.pages
 
             // Добавляем метку и картинку в StackLayout
 
+            titleView.Children.Add(exButton);
             titleUndView.Children.Add(titleLabel);
             titleUndView.Children.Add(titleUnderLabel);
             titleView.Children.Add(titleUndView);
             titleView.Children.Add(iconImage);
+            
 
             NavigationPage.SetTitleView(this, titleView);
             #endregion
         }
 
-        protected override bool OnBackButtonPressed()
+        private async void OnExButtonClicked(object sender, EventArgs e) // Выход
         {
-            // By returning TRUE and not calling base we cancel the hardware back button :)
-            // base.OnBackButtonPressed();
-            return true;
-        } // Запрет возвратa на предыдущую страницу
+            bool answer = await DisplayAlert("Выход", "Вы уверены что хотите выйти?", "Да", "Отмена");
+            if (answer)
+                await Navigation.PopAsync();
+
+            // дописать стирание данных автовхода
+        }
+
+        protected override bool OnBackButtonPressed()
+        {            
+           return true;
+        } 
+
+        private async void btnScan_Clicked(object sender, EventArgs e)
+        {
+            var scanner = DependencyService.Get<scanningQrCode>();
+            var resultScan = await scanner.ScanAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+
+            if (resultScan != null)
+            {
+                await DisplayAlert("Опа", resultScan, "Ок");
+            }
+
+        }
     }
 }

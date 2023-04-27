@@ -13,7 +13,7 @@ namespace NetEye
             //MainPage = new MainPage();
             MainPage = new NavigationPage(new MainPage())
             {
-                BarBackgroundColor = Color.FromHex("#839BFF")
+                BarBackgroundColor = Color.FromHex("#F4F4F3")
         };
         }
 
