@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NetEye.pages.addRequestPage" Visual="Material">
+    <ContentPage.Content>
+        <Frame Padding="6">
+            <Frame.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="white"
+                              Offset="0.5" />
+                    <GradientStop Color="#E5EAFF"
+                              Offset="1.0"/>
+                </LinearGradientBrush>
+            </Frame.Background>
+            
+            <Frame HasShadow="True" VerticalOptions="Center" HorizontalOptions="FillAndExpand"
+                   Padding="0" CornerRadius="10" MinimumWidthRequest="200" WidthRequest="200">
+                <StackLayout BackgroundColor="White">
+                    <StackLayout BackgroundColor="#839BFF" HorizontalOptions="FillAndExpand" Padding="3">
+                        <Label x:Name="techEqId" Text="Error 404" TextColor="white" 
+                               FontFamily="ur" FontSize="26" HorizontalOptions="Center"/>
+                    </StackLayout>
+                    <Editor FontFamily="ur" PlaceholderColor="Gray" Placeholder="Введите тут описание проблемы" 
+                            TextColor="Black" BackgroundColor="White" HeightRequest="100" MaxLength="200"/>
+                    <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                        <Button Text="Отмена" x:Name="btnCancel" Clicked="btnCancel_Clicked" 
+                                FontFamily="ur" BorderColor="Black" BorderWidth="1" 
+                                BackgroundColor="#839BFF" Margin="10" CornerRadius="10" HorizontalOptions="Start"/>
+                        <Button Text="Отправить" x:Name="btnSend" Clicked="btnSend_Clicked" 
+                                FontFamily="ur" BorderColor="Black" BorderWidth="1" 
+                                BackgroundColor="#839BFF" Margin="10" CornerRadius="10" HorizontalOptions="EndAndExpand"/>
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+        </Frame>
+    </ContentPage.Content>
+</ContentPage>

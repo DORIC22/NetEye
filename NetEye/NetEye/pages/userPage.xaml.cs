@@ -2,11 +2,12 @@
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-
+using ZXing;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -76,7 +77,40 @@ namespace NetEye.pages
 
             NavigationPage.SetTitleView(this, titleView);
             #endregion
+
+            #region Помойка
+            var requests = new List<Request>
+            {
+                new Request { TechEquipmentId = 1, Description = "Equipment 12333333333333333333333333333333333333331", Status = "1" },
+                new Request { TechEquipmentId = 2, Description = "Equipment 2", Status = "2" },
+                new Request { TechEquipmentId = 3, Description = "Equipment 3222222222222222222222222222sdaffffffdsfsdfsdfsdfsdfsdfsdfsdfdsfsdfsdfsd" +
+                "fsdfsdfsdfsd3", Status = "Denied" },
+                 new Request { TechEquipmentId = 1, Description = "Equipment 1", Status = "3" },
+                new Request { TechEquipmentId = 2, Description = "Equipment 2", Status = "4" },
+                new Request { TechEquipmentId = 3, Description = "Equipment 3", Status = "5" },
+                 new Request { TechEquipmentId = 1, Description = "Equipment 1", Status = "1" },
+                new Request { TechEquipmentId = 2, Description = "Equipment 2", Status = "2" },
+                new Request { TechEquipmentId = 3, Description = "Equipment 3", Status = "3" },
+                 new Request { TechEquipmentId = 1, Description = "Equipment 1", Status = "4" },
+                new Request { TechEquipmentId = 2, Description = "Equipment 2", Status = "2" },
+                new Request { TechEquipmentId = 3, Description = "Equipment 3", Status = "2" },
+                 new Request { TechEquipmentId = 1, Description = "Equipment 1", Status = "1" },
+                new Request { TechEquipmentId = 2, Description = "Equipment 2", Status = "3" },
+                new Request { TechEquipmentId = 3, Description = "Equipment 3", Status = "4" }
+            };
+
+
+            requestsList.ItemsSource = requests;
+            #endregion
         }
+
+        public class Request
+        {
+            public int TechEquipmentId { get; set; }
+            public string Description { get; set; }
+            public string Status { get; set; }
+        }
+
 
         private async void OnExButtonClicked(object sender, EventArgs e) // Выход
         {
@@ -94,8 +128,13 @@ namespace NetEye.pages
 
         private async void btnScan_Clicked(object sender, EventArgs e)
         {
+            bool flash = false;
+            if (switchFlashLight.IsToggled)
+                flash= true;
+
+            
             var scanner = DependencyService.Get<scanningQrCode>();
-            var resultScan = await scanner.ScanAsync();
+            var resultScan = await scanner.ScanAsync(flash);
 
             var options = new JsonSerializerOptions
             {
@@ -103,11 +142,14 @@ namespace NetEye.pages
             };
 
 
-            if (resultScan != null)
+            if (resultScan != null && resultScan != "")
             {
-                await DisplayAlert("Опа", resultScan, "Ок");
+                await Navigation.PushAsync(new addRequestPage(resultScan));
             }
 
         }
+
+        
     }
+
 }

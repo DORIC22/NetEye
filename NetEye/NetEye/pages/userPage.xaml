@@ -1,19 +1,63 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetEye.pages.userPage">
-    <Frame Padding="6">
+             x:Class="NetEye.pages.userPage" xmlns:local="clr-namespace:NetEye.pages"
+>
+    <Frame Padding="10">
         <Frame.Background>
             <LinearGradientBrush EndPoint="0,1">
-                <GradientStop Color="white"
-                              Offset="0.5" />
-                <GradientStop Color="#E5EAFF"
-                              Offset="1.0"/>
+                <GradientStop Color="white" Offset="0.5" />
+                <GradientStop Color="#E5EAFF" Offset="1.0"/>
             </LinearGradientBrush>
         </Frame.Background>
-        <Button x:Name="btnScan" Clicked="btnScan_Clicked" Text="scan" VerticalOptions="Center" HorizontalOptions="Center"/>
+
+        <AbsoluteLayout>
+
+            <Label Text="Ваши заявки:" FontFamily="ur" FontSize="18" TextColor="black" HorizontalOptions="Center"/>
+
+            <CollectionView x:Name="requestsList" SelectionMode="Single" HorizontalOptions="CenterAndExpand" VerticalOptions="StartAndExpand" Margin="0,25,0,0">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="#F4F4F3" HasShadow="True" Padding="5" CornerRadius="16" BorderColor="#839BFF">
+                            <StackLayout>
+                                <StackLayout Orientation="Horizontal">
+                                    <Label Text="ID Оборудования:" FontFamily="ur" TextColor="#839BFF"/>
+                                    <Label Text="{Binding TechEquipmentId}" FontFamily="ur" TextColor="Black"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Vertical">
+                                    <Label Text="Ваше описание: " FontFamily="ur" TextColor="#839BFF"/>
+                                    <Label Text="{Binding Description}" FontFamily="ur" TextColor="Black"/>
+                                </StackLayout>
+                                <StackLayout Orientation="Horizontal">
+                                    <Label Text="Статус:" FontFamily="ur" TextColor="#839BFF"/>
+                                    <Label Text="{Binding Status}" FontFamily="ur" TextColor="Black"/>
+                                </StackLayout>
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" 
+                           ItemSpacing="5"/>
+                </CollectionView.ItemsLayout>
+            </CollectionView>
+
+            <Frame AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,1" 
+                   BackgroundColor="#F4F4F3" Padding="0" Margin="0" CornerRadius="10" >
+                <StackLayout>
+                    <StackLayout BackgroundColor="#839BFF">
+                        <Label FontFamily="ur" Text="Фонарик:" TextColor="Black" HorizontalOptions="Center"/>
+                        <Switch x:Name="switchFlashLight" OnColor="Red" Visual="Material" ThumbColor="Black" HorizontalOptions="Center"/>
+                    </StackLayout>
+                    <ImageButton x:Name="btnScan" Clicked="btnScan_Clicked" Padding="-5" CornerRadius="20" BackgroundColor="#839BFF"
+                                 VerticalOptions="End" HorizontalOptions="End" Source="res/image/iconQR.png"
+                                 HeightRequest="110" WidthRequest="110" Margin="10"
+                             
+                                  BorderColor="Black" BorderWidth="1"/>
+                </StackLayout>
+            </Frame>
+        </AbsoluteLayout>
+
     </Frame>
-    
-        
-    
+
 </ContentPage>
