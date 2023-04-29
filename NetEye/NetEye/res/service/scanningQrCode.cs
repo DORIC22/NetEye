@@ -12,7 +12,7 @@ namespace NetEye.res.service
 {
     public class scanningQrCode
     {
-        public async Task<string> ScanAsync(bool flash)
+        public async Task<string> ScanAsync()
         {            
             var optionsDefault = new MobileBarcodeScanningOptions();            
             var scanner = new ZXing.Mobile.MobileBarcodeScanner();           

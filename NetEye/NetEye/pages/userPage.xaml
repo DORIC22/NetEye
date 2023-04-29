@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetEye.pages.userPage" xmlns:local="clr-namespace:NetEye.pages"
->
+             x:Class="NetEye.pages.userPage" xmlns:local="clr-namespace:NetEye.pages" xmlns:pancake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView">
     <Frame Padding="10">
         <Frame.Background>
             <LinearGradientBrush EndPoint="0,1">
@@ -13,9 +12,14 @@
 
         <AbsoluteLayout>
 
-            <Label Text="Ваши заявки:" FontFamily="ur" FontSize="18" TextColor="black" HorizontalOptions="Center"/>
+            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                <Entry TextChanged="Entry_TextChanged" x:Name="searchEntry" 
+                           HorizontalOptions="FillAndExpand" FontSize="18" FontFamily="ur" 
+                       TextColor="Black" PlaceholderColor="Gray" Placeholder="Введите ID техники"/>
+            </StackLayout>
 
-            <CollectionView x:Name="requestsList" SelectionMode="Single" HorizontalOptions="CenterAndExpand" VerticalOptions="StartAndExpand" Margin="0,25,0,0">
+            <CollectionView x:Name="requestsList" SelectionMode="Single" HorizontalOptions="CenterAndExpand" 
+                            VerticalOptions="StartAndExpand" Margin="0,60,0,0" SelectionChanged="requestsList_SelectionChanged">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame BackgroundColor="#F4F4F3" HasShadow="True" Padding="5" CornerRadius="16" BorderColor="#839BFF">
@@ -42,20 +46,44 @@
                 </CollectionView.ItemsLayout>
             </CollectionView>
 
-            <Frame AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,1" 
+            <Frame x:Name="frameBtnScan" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,1" 
                    BackgroundColor="#F4F4F3" Padding="0" Margin="0" CornerRadius="10" >
                 <StackLayout>
                     <StackLayout BackgroundColor="#839BFF">
-                        <Label FontFamily="ur" Text="Фонарик:" TextColor="Black" HorizontalOptions="Center"/>
-                        <Switch x:Name="switchFlashLight" OnColor="Red" Visual="Material" ThumbColor="Black" HorizontalOptions="Center"/>
+                        <Label FontFamily="ur" Text="Сканирование:" TextColor="Black" HorizontalOptions="Center" Padding="3"/>
                     </StackLayout>
                     <ImageButton x:Name="btnScan" Clicked="btnScan_Clicked" Padding="-5" CornerRadius="20" BackgroundColor="#839BFF"
                                  VerticalOptions="End" HorizontalOptions="End" Source="res/image/iconQR.png"
-                                 HeightRequest="110" WidthRequest="110" Margin="10"
-                             
+                                 HeightRequest="110" WidthRequest="110" Margin="10"                            
                                   BorderColor="Black" BorderWidth="1"/>
                 </StackLayout>
             </Frame>
+
+            <pancake:PancakeView CornerRadius="12" x:Name="modalFrame" AbsoluteLayout.LayoutFlags="PositionProportional" IsVisible="false"
+                   AbsoluteLayout.LayoutBounds="0.5,1" HorizontalOptions="CenterAndExpand" Padding="0"
+                   IsClippedToBounds="true">
+                <pancake:PancakeView.GestureRecognizers>
+                    <SwipeGestureRecognizer Direction="Left" Swiped="OnSwipeLeft"/>
+                </pancake:PancakeView.GestureRecognizers>
+                <StackLayout BackgroundColor="White">
+                    <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7">
+                        <Label Text="ID: " TextColor="Black" FontFamily="ur" FontSize="18"/>
+                        <Label Text="none" x:Name="modalId" TextColor="Black" FontFamily="ur" FontSize="18"/>
+                    </StackLayout>
+                    <StackLayout Padding="10,8" BackgroundColor="White">
+                        <Label Text="Ваше описание:" TextColor="Black" FontFamily="ur" FontSize="18"/>
+                        <Label Text="none" x:Name="modalDescription" TextColor="Black" FontFamily="ur" 
+                               FontSize="14"/>
+                    </StackLayout>
+                    <StackLayout Padding="10,8" BackgroundColor="White">
+                        <Label Text="Пояснение причины отмены:" TextColor="Black" FontFamily="ur" FontSize="18"/>
+                        <Label Text="Отмена по причине попрыженок" x:Name="modalDescriptionCancel" 
+                               TextColor="Black" FontFamily="ur" FontSize="14"/>
+                    </StackLayout>
+                </StackLayout>
+            </pancake:PancakeView>
+
+
         </AbsoluteLayout>
 
     </Frame>

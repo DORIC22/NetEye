@@ -30,7 +30,7 @@
             <StackLayout Grid.Row="2" VerticalOptions="Center">
                 <Frame HasShadow="True" Padding="0,10" VerticalOptions="StartAndExpand" BorderColor="#839BFF" CornerRadius="10" BackgroundColor="White">
                     <StackLayout Padding="5">
-                        <Label Text="Авторизация" TextColor="Black" FontSize="22" FontFamily="ur" HorizontalOptions="Center"/>
+                        <Label Text="Авторизация" TextColor="Black" FontSize="26" FontFamily="ur" HorizontalOptions="Center"/>
                         <Image Source="Resources/drawable/mainLine"/>
 
                         <StackLayout Padding="10,0" >
@@ -58,9 +58,6 @@
                         Text="Войти" FontFamily="ur" BackgroundColor="#839BFF" Padding="100,0" x:Name="btn_Auth" Clicked="btn_Auth_Clicked"/>
                     </StackLayout>
                 </Frame>
-
-                
-
             </StackLayout>
             
         </Grid>
