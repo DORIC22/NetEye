@@ -68,7 +68,7 @@ namespace NetEye
             entry_Password.IsEnabled = true;
             #endregion
 
-            await Navigation.PushAsync(new userPage());            
+            await Navigation.PushAsync(new techPage());            
         }
 
         

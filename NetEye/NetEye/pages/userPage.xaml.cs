@@ -11,6 +11,7 @@ using ZXing;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ZXing.OneD;
+using Xamarin.Essentials;
 
 namespace NetEye.pages
 {
@@ -18,36 +19,36 @@ namespace NetEye.pages
     public partial class userPage : ContentPage
     {
         List<Request> requests = new List<Request>
-{
-    new Request { TechEquipmentId = "3", Description = "Computer not starting up", Status = "0" },
-    new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "1" },
-    new Request { TechEquipmentId = "348-01", Description = "Blue screen of death", Status = "2" },
-    new Request { TechEquipmentId = "348-03", Description = "Equipment 1", Status = "3" },
-    new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
-    new Request { TechEquipmentId = "348-04", Description = "Equipment 3", Status = "1" },
-    new Request { TechEquipmentId = "348-02", Description = "Computer overheating", Status = "2" },
-    new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
-    new Request { TechEquipmentId = "348-05", Description = "Equipment 3", Status = "0" },
-    new Request { TechEquipmentId = "348-01", Description = "Hard drive failure", Status = "1" },
-    new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "2" },
-    new Request { TechEquipmentId = "348-06", Description = "Equipment 3", Status = "2" },
-    new Request { TechEquipmentId = "348-01", Description = "Monitor not displaying", Status = "3" },
-    new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
-    new Request { TechEquipmentId = "348-07", Description = "Equipment 3", Status = "1" },
-    new Request { TechEquipmentId = "348-01", Description = "Computer running slow", Status = "2" },
-    new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
-    new Request { TechEquipmentId = "348-08", Description = "Equipment 3", Status = "0" },
-    new Request { TechEquipmentId = "348-01", Description = "Virus infection", Status = "1" },
-    new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "2" },
-    new Request { TechEquipmentId = "348-09", Description = "Equipment 3", Status = "3" },
-    new Request { TechEquipmentId = "348-01", Description = "Computer not booting up", Status = "0" },
-    new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
-    new Request { TechEquipmentId = "348-10", Description = "Equipment 3", Status = "2" },
-    new Request { TechEquipmentId = "348-01", Description = "Network connection issues", Status = "1" },
-    new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
-    new Request { TechEquipmentId = "348-11", Description = "Equipment 3", Status = "1" },
-    new Request { TechEquipmentId = "348-01", Description = "Software not working", Status = "2" }
-            };
+        {
+            new Request { TechEquipmentId = "3", Description = "Computer not starting up", Status = "0" },
+            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "1" },
+            new Request { TechEquipmentId = "348-01", Description = "Blue screen of death", Status = "2" },
+            new Request { TechEquipmentId = "348-03", Description = "Equipment 1", Status = "3" },
+            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
+            new Request { TechEquipmentId = "348-04", Description = "Equipment 3", Status = "1" },
+            new Request { TechEquipmentId = "348-02", Description = "Computer overheating", Status = "2" },
+            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
+            new Request { TechEquipmentId = "348-05", Description = "Equipment 3", Status = "0" },
+            new Request { TechEquipmentId = "348-01", Description = "Hard drive failure", Status = "1" },
+            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "2" },
+            new Request { TechEquipmentId = "348-06", Description = "Equipment 3", Status = "2" },
+            new Request { TechEquipmentId = "348-01", Description = "Monitor not displaying", Status = "3" },
+            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
+            new Request { TechEquipmentId = "348-07", Description = "Equipment 3", Status = "1" },
+            new Request { TechEquipmentId = "348-01", Description = "Computer running slow", Status = "2" },
+            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
+            new Request { TechEquipmentId = "348-08", Description = "Equipment 3", Status = "0" },
+            new Request { TechEquipmentId = "348-01", Description = "Virus infection", Status = "1" },
+            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "2" },
+            new Request { TechEquipmentId = "348-09", Description = "Equipment 3", Status = "3" },
+            new Request { TechEquipmentId = "348-01", Description = "Computer not booting up", Status = "0" },
+            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
+            new Request { TechEquipmentId = "348-10", Description = "Equipment 3", Status = "2" },
+            new Request { TechEquipmentId = "348-01", Description = "Network connection issues", Status = "1" },
+            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
+            new Request { TechEquipmentId = "348-11", Description = "Equipment 3", Status = "1" },
+            new Request { TechEquipmentId = "348-01", Description = "Software not working", Status = "2" }
+        };
 
         bool isFirstShowModal = true;
         public userPage()
@@ -112,12 +113,14 @@ namespace NetEye.pages
             NavigationPage.SetTitleView(this, titleView);
             #endregion
 
-            #region Помойка
             
-
-
             requestsList.ItemsSource = requests;
-            #endregion
+
+            if (requests.Count == 0)
+            {
+                frameNotFound.IsVisible = true;
+                labelNotFound.Text = "Вы пока не подавали заявок, сделайте это отсканировав QR код";
+            }
         }
 
         public class Request
@@ -143,7 +146,21 @@ namespace NetEye.pages
         } 
 
         private async void btnScan_Clicked(object sender, EventArgs e)
-        {           
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+            if (status != PermissionStatus.Granted)
+            {
+                await Permissions.RequestAsync<Permissions.Camera>();
+                status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+            }
+            if (status != PermissionStatus.Granted)
+            {
+                
+                await DisplayAlert("Нет доступа", "У нас нет доступа к камере, пожалуйста разрешите в настройках вашего устройства доступ к камере для NetEye", "Ок");
+                return;
+            }
+
+
             var scanner = DependencyService.Get<scanningQrCode>();
             var resultScan = await scanner.ScanAsync();
 
@@ -156,7 +173,7 @@ namespace NetEye.pages
             if (resultScan != null && resultScan != "")
             {
                 await Navigation.PushAsync(new addRequestPage(resultScan));
-            }
+            }           
 
         }
 
@@ -165,11 +182,27 @@ namespace NetEye.pages
             if (searchEntry.Text.Length == 0)
             {
                 requestsList.ItemsSource = requests;
+                if (requests.Count == 0)
+                {
+                    frameNotFound.IsVisible = true;
+                    labelNotFound.Text = "Вы пока не подавали заявок, сделайте это отсканировав QR код";
+                }    
+                else
+                {
+                    frameNotFound.IsVisible = false;
+                }
             }
             else
             {
                 var filteredObjects = requests.Where(o => o.TechEquipmentId.Contains(searchEntry.Text)).ToList();
                 requestsList.ItemsSource = filteredObjects;
+                if (filteredObjects.Count == 0)
+                {
+                    frameNotFound.IsVisible = true;
+                    labelNotFound.Text = "Ничего не найдено, проверьте условия поиска";
+                }
+                else
+                    frameNotFound.IsVisible = false;
             }
         }
 

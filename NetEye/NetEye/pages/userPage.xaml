@@ -47,6 +47,11 @@
                 </CollectionView.ItemsLayout>
             </CollectionView>
 
+            <StackLayout x:Name="frameNotFound" IsVisible="false"
+                         AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.5,0.1">
+                <Label x:Name="labelNotFound" Text="Ничего не найдено, проверьте условия поиска." FontSize="14" HorizontalOptions="CenterAndExpand" FontFamily="uli"/>
+            </StackLayout>
+
             <Frame x:Name="frameBtnScan" AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="1,1" 
                    BackgroundColor="#F4F4F3" Padding="0" Margin="0" CornerRadius="10" >
                 <StackLayout>

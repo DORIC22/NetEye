@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:pancake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+            x:Class="NetEye.pages.techPage" x:Name="tabbedPage" SelectedTabColor="Black" BarBackgroundColor="#839BFF" >
+  <!--Pages can be added as references or inline-->
+    <ContentPage Title="Заявки">
+        <Frame Padding="10">
+            <Frame.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="white" Offset="0.5" />
+                    <GradientStop Color="#E5EAFF" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Frame.Background>
+
+            <AbsoluteLayout>
+                <Frame AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.5,0" HorizontalOptions="CenterAndExpand" 
+                       BorderColor="Black" Padding="3" CornerRadius="5">
+                    <StackLayout x:Name="frameSearchRequests" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                        <Label Text="Поиск:" TextColor="Black" VerticalOptions="Center" FontFamily="ur" FontSize="18"/>
+                        <Entry BackgroundColor="White" Placeholder="ID" HorizontalOptions="FillAndExpand" 
+                               Visual="Material" WidthRequest="120" FontFamily="ur" MaxLength="50" 
+                               x:Name="entrySearchRequest" TextChanged="entrySearchRequest_TextChanged"/>
+                        <Frame Padding="4" HorizontalOptions="FillAndExpand" CornerRadius="10" HasShadow="False" BorderColor="Black" BackgroundColor="#839BFF">
+                            <Picker Title="Статус:" Margin="0,-1" BackgroundColor="#839BFF" WidthRequest="100"
+                                    TextColor="Black" TitleColor="Gray" FontFamily="ur" x:Name="picker_status" SelectedIndexChanged="picker_status_SelectedIndexChanged">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>Принята</x:String>
+                                        <x:String>В работе</x:String>
+                                        <x:String>Отменена</x:String>
+                                        <x:String>Архив</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                        </Frame>
+                    </StackLayout>
+                </Frame>
+
+                <CollectionView x:Name="requestsList" SelectionMode="Single" HorizontalOptions="CenterAndExpand" 
+                            VerticalOptions="StartAndExpand" Margin="0,70,0,0" SelectionChanged="requestsList_SelectionChanged">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BackgroundColor="#F4F4F3" HasShadow="True" Padding="5" CornerRadius="16" BorderColor="#839BFF">
+                                <StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="ID Оборудования:" FontFamily="ur" TextColor="#839BFF"/>
+                                        <Label Text="{Binding TechEquipmentId}" FontFamily="ur" TextColor="Black"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Vertical">
+                                        <Label Text="Описание:" FontFamily="ur" TextColor="#839BFF"/>
+                                        <Label Text="{Binding Description}" FontFamily="ur" TextColor="Black" MaxLines="2"/>
+                                    </StackLayout>
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="Статус:" FontFamily="ur" TextColor="#839BFF"/>
+                                        <Label Text="{Binding Status}" FontFamily="ur" TextColor="Black"/>
+                                    </StackLayout>
+                                </StackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" 
+                           ItemSpacing="5"/>
+                    </CollectionView.ItemsLayout>
+                </CollectionView>
+                
+                <StackLayout x:Name="frameNotFound" IsVisible="false"
+                         AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.5,0.1">
+                    <Label x:Name="labelNotFound" Text="Ничего не найдено, проверьте условия поиска." FontSize="14" HorizontalOptions="CenterAndExpand" FontFamily="uli"/>
+                </StackLayout>
+
+                <pancake:PancakeView CornerRadius="12" x:Name="modalFrameRequest" AbsoluteLayout.LayoutFlags="PositionProportional"
+                   AbsoluteLayout.LayoutBounds="0.5,1" HorizontalOptions="FillAndExpand" Padding="0"
+                   IsClippedToBounds="true" IsVisible="false">
+                    <pancake:PancakeView.GestureRecognizers>
+                        <SwipeGestureRecognizer Direction="Left" />
+                    </pancake:PancakeView.GestureRecognizers>
+                    <StackLayout BackgroundColor="White">
+                        <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7">
+                            <Label Text="Заявка " TextColor="White" FontFamily="ur" FontSize="22" VerticalOptions="Center"/>
+                            <Label Text="404" TextColor="White" FontFamily="ur" FontSize="22" x:Name="modalLabelIdRequest" VerticalOptions="Center"/>
+                            <ImageButton Source="res/image/cancel_button.png" WidthRequest="35" 
+                                         HeightRequest="35" CornerRadius="20" Padding="-25" 
+                                         HorizontalOptions="EndAndExpand" BackgroundColor="White"
+                                         Clicked="ImageButton_Clicked"/>
+                        </StackLayout>
+                        <StackLayout Padding="10,8" BackgroundColor="White">
+                            <Label Text="Описание от пользователя:" TextColor="Black" FontFamily="ur" FontSize="18"/>
+                            <Label Text="404" x:Name="modalDescription" TextColor="#839BFF" FontFamily="ur" 
+                               FontSize="14"/>
+                        </StackLayout>
+                        <StackLayout Padding="10,4" BackgroundColor="White" Orientation="Horizontal">
+                            <Label Text="От:" FontSize="16" TextColor="Black" FontFamily="ur"/>
+                            <Label Text="404" x:Name="modalUserFrom" TextColor="#839BFF" FontFamily="ur" FontSize="16"/>
+                        </StackLayout>
+                        <StackLayout Padding="10,4" BackgroundColor="White" Orientation="Horizontal">
+                            <Label Text="Дата:" FontSize="16" TextColor="Black" FontFamily="ur"/>
+                            <Label Text="404" x:Name="modalDate" TextColor="#839BFF" FontFamily="ur" FontSize="16"/>
+                        </StackLayout>
+                        <Button x:Name="btnShowTechEquipment" Text="Сведения об оборудовании" FontFamily="ur" Margin="10"
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White"/>
+                    </StackLayout>
+                </pancake:PancakeView>
+
+            </AbsoluteLayout>
+
+        </Frame>
+    </ContentPage>
+    <ContentPage Title="Оборудование">
+        <StackLayout>
+            <Label Text="Пораже123е 1"/>
+            <Label Text="Пораж123ие 1"/>
+            <Label Text="Пораже123ие 1"/>
+        </StackLayout>
+    </ContentPage>
+    <ContentPage Title="Сканирование" Appearing="ContentPage_Appearing"/>
+</TabbedPage>
