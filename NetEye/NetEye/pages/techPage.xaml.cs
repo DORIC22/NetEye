@@ -141,6 +141,8 @@ namespace NetEye.pages
                 await DisplayAlert("Нет доступа", "У нас нет доступа к камере, пожалуйста разрешите в настройках вашего устройства доступ к камере для NetEye", "Ок");                
                 return;
             }
+            
+            //DependencyService.RegisterSingleton<IM>
 
             var scanner = DependencyService.Get<scanningQrCode>();
             var resultScan = await scanner.ScanAsync();

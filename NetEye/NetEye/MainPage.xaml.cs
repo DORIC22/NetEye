@@ -1,4 +1,6 @@
 ﻿using NetEye.pages;
+using NetEye.res.model;
+using NetEye.res.service;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,10 +15,14 @@ namespace NetEye
 {
     public partial class MainPage : ContentPage
     {
+        private HttpClientWithJwt _httpClient;
+
         public MainPage()
         {
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
+
+            _httpClient = HttpClientWithJwt.GetInstance();
         }
 
         private async void TapGestureRecognizer_Tapped(object sender, EventArgs e)
@@ -56,10 +62,13 @@ namespace NetEye
             aiMain.IsVisible = true;
             btn_Auth.IsVisible= false;
             #endregion
+
+            AuthUser user = null;
+
             await Task.Run(() =>
             {
-                //Процесс обращения к серверу
-                Thread.Sleep(1000);
+                user = _httpClient.Authorization(entry_Email.Text, entry_Password.Text);  
+                TechEquipment techEquipment = null;                
             });
             #region После попытки авторизации
             aiMain.IsVisible = false;
