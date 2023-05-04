@@ -89,6 +89,31 @@
                 </StackLayout>
             </pancake:PancakeView>
 
+            <Frame BackgroundColor="White" AbsoluteLayout.LayoutFlags="PositionProportional" IsVisible="false"
+                   AbsoluteLayout.LayoutBounds="0.5,1" Padding="0" CornerRadius="10" x:Name="frameModalAddRequest">
+                <StackLayout>
+                    <StackLayout BackgroundColor="#839BFF">
+                        <Label x:Name="labelIdEquipment" HorizontalOptions="Center" Text="404" 
+                               Padding="6" FontFamily="ur" FontSize="24" TextColor="Black"/>
+                    </StackLayout>
+                    <StackLayout Padding="5">
+                        <Label Text="Введите описание проблемы:" FontFamily="ur" FontSize="18" TextColor="Black"/>
+                        <Editor FontFamily="ur" PlaceholderColor="Gray" Placeholder="Введите тут описание проблемы" 
+                            TextColor="Black" BackgroundColor="White" HeightRequest="100" MaxLength="200" x:Name="editorDescriptionRequest" 
+                                TextChanged="editorDescriptionRequest_TextChanged"/>
+                    </StackLayout>
+                    <StackLayout Padding="5" Orientation="Horizontal">
+                        <Button Text="Отмена" x:Name="btnCancel" Clicked="btnCancel_Clicked" 
+                                FontFamily="ur" BorderColor="Black" BorderWidth="1" 
+                                BackgroundColor="#839BFF" Margin="5,15" CornerRadius="10" HorizontalOptions="Start"/>
+                        <Button Text="Отправить" x:Name="btnSend" Clicked="btnSend_Clicked" 
+                                FontFamily="ur" BorderColor="Black" BorderWidth="1" 
+                                BackgroundColor="#839BFF" Margin="5, 15" CornerRadius="10" HorizontalOptions="EndAndExpand"/>
+                    </StackLayout>
+                </StackLayout>
+            </Frame>
+            
+
 
         </AbsoluteLayout>
 

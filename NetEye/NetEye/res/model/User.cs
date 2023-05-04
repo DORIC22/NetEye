@@ -23,8 +23,8 @@ namespace NetEye.res.model
     public enum UserRole
     {
         User,
-        Admin,
-        Tech
+        Tech,
+        Admin
     }
 
 }

@@ -12,46 +12,19 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using ZXing.OneD;
 using Xamarin.Essentials;
+using NetEye.res.model;
 
 namespace NetEye.pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class userPage : ContentPage
     {
-        List<Request> requests = new List<Request>
-        {
-            new Request { TechEquipmentId = "3", Description = "Computer not starting up", Status = "0" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "1" },
-            new Request { TechEquipmentId = "348-01", Description = "Blue screen of death", Status = "2" },
-            new Request { TechEquipmentId = "348-03", Description = "Equipment 1", Status = "3" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
-            new Request { TechEquipmentId = "348-04", Description = "Equipment 3", Status = "1" },
-            new Request { TechEquipmentId = "348-02", Description = "Computer overheating", Status = "2" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
-            new Request { TechEquipmentId = "348-05", Description = "Equipment 3", Status = "0" },
-            new Request { TechEquipmentId = "348-01", Description = "Hard drive failure", Status = "1" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "2" },
-            new Request { TechEquipmentId = "348-06", Description = "Equipment 3", Status = "2" },
-            new Request { TechEquipmentId = "348-01", Description = "Monitor not displaying", Status = "3" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
-            new Request { TechEquipmentId = "348-07", Description = "Equipment 3", Status = "1" },
-            new Request { TechEquipmentId = "348-01", Description = "Computer running slow", Status = "2" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
-            new Request { TechEquipmentId = "348-08", Description = "Equipment 3", Status = "0" },
-            new Request { TechEquipmentId = "348-01", Description = "Virus infection", Status = "1" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "2" },
-            new Request { TechEquipmentId = "348-09", Description = "Equipment 3", Status = "3" },
-            new Request { TechEquipmentId = "348-01", Description = "Computer not booting up", Status = "0" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
-            new Request { TechEquipmentId = "348-10", Description = "Equipment 3", Status = "2" },
-            new Request { TechEquipmentId = "348-01", Description = "Network connection issues", Status = "1" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
-            new Request { TechEquipmentId = "348-11", Description = "Equipment 3", Status = "1" },
-            new Request { TechEquipmentId = "348-01", Description = "Software not working", Status = "2" }
-        };
-
+        TechEquipment equipment = new TechEquipment();
+        private HttpClientWithJwt _httpClient;
+        AuthUser fUser = new AuthUser();
+        RepairRequest repairRequests = null;
         bool isFirstShowModal = true;
-        public userPage()
+        public userPage(AuthUser user)
         {
             InitializeComponent();
             #region navBar
@@ -112,11 +85,19 @@ namespace NetEye.pages
 
             NavigationPage.SetTitleView(this, titleView);
             #endregion
+            _httpClient = HttpClientWithJwt.GetInstance();
+            fUser = user;
+            editorDescriptionRequest.Text = "";
+            frameModalAddRequest.WidthRequest = App.Current.MainPage.Width - 20;
 
-            
-            requestsList.ItemsSource = requests;
+            if (fUser.RepairRequestsSubmitted == null)
+            {
+                fUser.RepairRequestsSubmitted = new HashSet<RepairRequest>(new List<RepairRequest>());
+            }
 
-            if (requests.Count == 0)
+            requestsList.ItemsSource = fUser.RepairRequestsSubmitted;
+
+            if (fUser.RepairRequestsSubmitted.Count == 0)
             {
                 frameNotFound.IsVisible = true;
                 labelNotFound.Text = "Вы пока не подавали заявок, сделайте это отсканировав QR код";
@@ -172,7 +153,18 @@ namespace NetEye.pages
 
             if (resultScan != null && resultScan != "")
             {
-                await Navigation.PushAsync(new addRequestPage(resultScan));
+                equipment = _httpClient.GetTechEquipmentById(resultScan);
+
+                if (equipment != null)
+                {
+                    frameModalAddRequest.IsVisible= true;
+                    labelIdEquipment.Text = equipment.Id;
+                }          
+                else
+                {
+                    await DisplayAlert("Оборудование не добавлено", "Данное оборудование отсутствует в базе данных." +
+                        " Обратитесь к системному администратору для добавления оборудования.", "Ок");
+                }
             }           
 
         }
@@ -181,8 +173,8 @@ namespace NetEye.pages
         {
             if (searchEntry.Text.Length == 0)
             {
-                requestsList.ItemsSource = requests;
-                if (requests.Count == 0)
+                requestsList.ItemsSource = fUser.RepairRequestsSubmitted;
+                if (fUser.RepairRequestsSubmitted.Count == 0)
                 {
                     frameNotFound.IsVisible = true;
                     labelNotFound.Text = "Вы пока не подавали заявок, сделайте это отсканировав QR код";
@@ -194,7 +186,7 @@ namespace NetEye.pages
             }
             else
             {
-                var filteredObjects = requests.Where(o => o.TechEquipmentId.Contains(searchEntry.Text)).ToList();
+                var filteredObjects = fUser.RepairRequestsSubmitted.Where(o => o.TechEquipmentId.Contains(searchEntry.Text)).ToList();
                 requestsList.ItemsSource = filteredObjects;
                 if (filteredObjects.Count == 0)
                 {
@@ -218,26 +210,80 @@ namespace NetEye.pages
 
         private async void requestsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedRequest = e.CurrentSelection[0] as Request;
+            var selectedRequest = e.CurrentSelection[0] as RepairRequest;
             if (selectedRequest != null)
             {
-                if (selectedRequest.Status == "2")
+                if (selectedRequest.Status == 3)
                 {
                     frameBtnScan.IsVisible = false;
+                    frameModalAddRequest.IsVisible = false;
                     modalFrame.IsVisible = true;
+                    
                     if (!isFirstShowModal)
                     {                     
                         await modalFrame.FadeTo(250, 0);                       
                     }                    
-                        modalId.Text = selectedRequest.TechEquipmentId;
-                        modalDescription.Text = selectedRequest.Description;
-                        //modal.cancelled ...
+                    modalId.Text = selectedRequest.TechEquipmentId;
+                    modalDescription.Text = selectedRequest.Description;
+                    modalDescriptionCancel.Text = selectedRequest.RepairNote;
                 }
                 else
                 {
                     modalFrame.IsVisible = false;
                     frameBtnScan.IsVisible = true;
                 }
+            }
+        }
+
+        private void editorDescriptionRequest_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (btnSend.IsEnabled == false)
+            {
+                if (editorDescriptionRequest.Text.Length > 14)
+                {
+                    btnSend.IsEnabled = true;
+                }
+            }
+        }
+
+        private async void btnCancel_Clicked(object sender, EventArgs e)
+        {
+            bool answer = await DisplayAlert("Отмена", "Отменить подачу заявки?", "Да", "Нет");
+            if (answer)
+                frameModalAddRequest.IsVisible = false;
+        }
+
+        private async void btnSend_Clicked(object sender, EventArgs e)
+        {
+            string desc = editorDescriptionRequest.Text;
+            int userId = Convert.ToInt32(App.Current.Properties["UserId"]);
+            string techId = labelIdEquipment.Text;
+
+            if (desc.Length < 14)
+            {
+                btnSend.IsEnabled = false;
+                DependencyService.Get<IToast>().LongToast("Опишите проблему более детально");
+                return;
+            }
+
+            try
+            {
+                RepairRequest request = new RepairRequest();
+                request.Description = desc;
+                request.UserFromId = userId;
+                request.Status = 0;
+                request.TechEquipmentId = techId;
+                _httpClient.PostRepairRequest(request);
+                DependencyService.Get<IToast>().LongToast("Заявка успешно подана");
+                frameModalAddRequest.IsVisible = false;
+
+                fUser.RepairRequestsSubmitted.Add(request);
+                requestsList.ItemsSource = null;
+                requestsList.ItemsSource = fUser.RepairRequestsSubmitted;
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlert("Ошибка", ex.ToString(), "Ок");
             }
         }
     }

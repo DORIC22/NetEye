@@ -21,11 +21,13 @@ namespace NetEye.res.model
         public DateTime CreatedDate { get; set; }
 
         public int Status { get; set; }
+
+        public string RepairNote { get; set; }
     }
     public enum RepairRequestStatus
     {
         Accepted,
-        Working,
+        Worked,
         Finished,
         Cancelled
     }

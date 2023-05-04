@@ -64,20 +64,66 @@ namespace NetEye
             #endregion
 
             AuthUser user = null;
-
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
-                user = _httpClient.Authorization(entry_Email.Text, entry_Password.Text);  
-                TechEquipment techEquipment = null;                
+                try
+                {
+                    user = _httpClient.Authorization(entry_Email.Text, entry_Password.Text);
+                    if (user != null)
+                    {
+                        App.Current.Properties.Remove("UserId");
+                        App.Current.Properties.Add("UserId", Convert.ToInt32(user.Id)); //Сохраняем id пользователя
+                        string userRole = user.Role.ToString();
+
+                        switch (userRole)
+                        {
+                            case "User":
+                                Device.BeginInvokeOnMainThread(async () =>
+                                {
+                                    await Navigation.PushAsync(new userPage(user));
+                                    DependencyService.Get<IToast>().LongToast("Добро пожаловать, " + user.FullName);
+                                });
+                                break;
+                            case "Tech":
+                                Device.BeginInvokeOnMainThread(async () =>
+                                {
+                                    await Navigation.PushAsync(new techPage(user));
+                                    DependencyService.Get<IToast>().LongToast("Добро пожаловать, " + user.FullName);
+                                });
+                                break;
+                            case "Admin":
+                                Device.BeginInvokeOnMainThread(async () =>
+                                {
+                                    await DisplayAlert("Предупреждение", "Функционал администратора в мобильном приложении ограничен," +
+                                        "используйте Web версию нашей системы для получения доступа ко всем функциям", "Ок");
+                                    await Navigation.PushAsync(new techPage(user));
+                                    DependencyService.Get<IToast>().LongToast("Добро пожаловать, " + user.FullName);
+                                });
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Device.BeginInvokeOnMainThread(async () =>
+                        {
+                            await DisplayAlert("Что-то пошло не так", "Проверьте Вашу почту и пароль", "Ок");
+                        });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Device.BeginInvokeOnMainThread(async () =>
+                    {
+                        await DisplayAlert("Что-то пошло не так", ex.ToString(), "Ок");
+                    });
+                }
             });
             #region После попытки авторизации
             aiMain.IsVisible = false;
             btn_Auth.IsVisible = true;
             entry_Email.IsEnabled = true;
             entry_Password.IsEnabled = true;
-            #endregion
-
-            await Navigation.PushAsync(new techPage());            
+            #endregion            
         }
 
         

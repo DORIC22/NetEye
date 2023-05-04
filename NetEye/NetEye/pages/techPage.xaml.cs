@@ -1,4 +1,5 @@
-﻿using NetEye.res.service;
+﻿using NetEye.res.model;
+using NetEye.res.service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,12 +49,11 @@ namespace NetEye.pages
             new Request { TechEquipmentId = "348-01", Description = "Software not working", Status = "2" }
         };
 
-        public techPage ()
+        public techPage (AuthUser user)
         {
             InitializeComponent();
             picker_status.SelectedIndex = 0;
-            Sort();
-            DependencyService.Get<IToast>().LongToast("Добро пожаловать, " + "404");
+            Sort();            
             #region
             modalFrameRequest.WidthRequest = App.Current.MainPage.Width - 20;
             frameSearchRequests.WidthRequest = App.Current.MainPage.Width - 20;
@@ -155,7 +155,7 @@ namespace NetEye.pages
 
             if (resultScan != null && resultScan != "")
             {
-                await Navigation.PushAsync(new addRequestPage(resultScan));
+                //await Navigation.PushAsync(new addRequestPage(resultScan));
             }
             tabbedPage.CurrentPage = tabbedPage.Children[0];
         }

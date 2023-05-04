@@ -21,8 +21,9 @@ namespace NetEye.res.service
         public string RefreshToken { get; private set; }
 
         private HttpClientWithJwt()
-        {
+        {            
             _httpClient = new RestClient(BaseUrl);
+            //_httpClient.Options.Timeout = 5000;
         }
 
         public static HttpClientWithJwt GetInstance()
