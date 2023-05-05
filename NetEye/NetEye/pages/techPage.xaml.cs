@@ -16,48 +16,24 @@ namespace NetEye.pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class techPage : TabbedPage
     {
-        List<Request> requests = new List<Request>
-        {
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "1" },
-            new Request { TechEquipmentId = "348-01", Description = "Blue screen of death Blue screen of death Blue screen of death" +
-                "Blue screen of death Blue screen of death Blue screen of death Blue screen of death Blue screen of death Blue screen of death" +
-                "Blue screen of death Blue screen of death Blue screen of death", Status = "2" },
-            new Request { TechEquipmentId = "348-03", Description = "Equipment 1", Status = "3" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
-            new Request { TechEquipmentId = "348-04", Description = "Equipment 3", Status = "1" },
-            new Request { TechEquipmentId = "348-02", Description = "Computer overheating", Status = "2" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
-            new Request { TechEquipmentId = "348-05", Description = "Equipment 3", Status = "0" },
-            new Request { TechEquipmentId = "348-01", Description = "Hard drive failure", Status = "1" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "2" },
-            new Request { TechEquipmentId = "348-06", Description = "Equipment 3", Status = "2" },
-            new Request { TechEquipmentId = "348-01", Description = "Monitor not displaying", Status = "3" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
-            new Request { TechEquipmentId = "348-07", Description = "Equipment 3", Status = "1" },
-            new Request { TechEquipmentId = "348-01", Description = "Computer running slow", Status = "2" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
-            new Request { TechEquipmentId = "348-08", Description = "Equipment 3", Status = "0" },
-            new Request { TechEquipmentId = "348-01", Description = "Virus infection", Status = "1" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "2" },
-            new Request { TechEquipmentId = "348-09", Description = "Equipment 3", Status = "3" },
-            new Request { TechEquipmentId = "348-01", Description = "Computer not booting up", Status = "0" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "3" },
-            new Request { TechEquipmentId = "348-10", Description = "Equipment 3", Status = "2" },
-            new Request { TechEquipmentId = "348-01", Description = "Network connection issues", Status = "1" },
-            new Request { TechEquipmentId = "348-02", Description = "Equipment 2", Status = "0" },
-            new Request { TechEquipmentId = "348-11", Description = "Equipment 3", Status = "1" },
-            new Request { TechEquipmentId = "348-01", Description = "Software not working", Status = "2" }
-        };
-
+        TechEquipment equipment = new TechEquipment();
+        private HttpClientWithJwt _httpClient;
+        AuthUser fUser = new AuthUser();
+        RepairRequest repairRequests = null;
         public techPage (AuthUser user)
         {
             InitializeComponent();
+            _httpClient = HttpClientWithJwt.GetInstance();
+            fUser = user;
+            requestsList.ItemsSource = fUser.RepairRequestsReceived;
+
             picker_status.SelectedIndex = 0;
             Sort();            
-            #region
+            #region Ширина модалки
             modalFrameRequest.WidthRequest = App.Current.MainPage.Width - 20;
             frameSearchRequests.WidthRequest = App.Current.MainPage.Width - 20;
-            #endregion
+            modalFrameAfterScanning.WidthRequest = App.Current.MainPage.Width - 20;
+            #endregion 
             #region navBar
             NavigationPage.SetHasBackButton(this, false);
 
@@ -155,24 +131,43 @@ namespace NetEye.pages
 
             if (resultScan != null && resultScan != "")
             {
-                //await Navigation.PushAsync(new addRequestPage(resultScan));
-            }
+                equipment = _httpClient.GetTechEquipmentById(resultScan);
+                if (equipment != null)
+                {
+                    modalFrameRequest.IsVisible = false;
+                    modalFrameAfterScanning.IsVisible = true;
+                    modalAfterScanningLabelIdRequest.Text = resultScan;
+                }
+                else
+                {
+                    tabbedPage.CurrentPage = tabbedPage.Children[0];
+                    bool answer = await DisplayAlert("Уведомление", "Данное оборудование не " +
+                    "добавлено в базу данных.\nДобавить сейчас?", "Да", "Нет");
+                }
+            }            
             tabbedPage.CurrentPage = tabbedPage.Children[0];
         }
 
         private void requestsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selectedRequest = e.CurrentSelection[0] as Request;
+            modalFrameAfterScanning.IsVisible = false;
+            var selectedRequest = e.CurrentSelection[0] as RepairRequest;
             if (selectedRequest != null)
             {
                 modalFrameRequest.IsVisible= true;
-                modalDescription.Text = selectedRequest.Description;               
+                modalDescription.Text = selectedRequest.Description;  
+                modalDate.Text = selectedRequest.CreatedDate.ToString();
+                modalLabelIdRequest.Text = selectedRequest.Id.ToString();
+
+                User user = _httpClient.GetUserById(selectedRequest.UserFromId);
+                modalUserFrom.Text = user.FullName;
+                requestsList.SelectedItem = SelectableItemsView.EmptyViewProperty;
             }
         }
 
         private void ImageButton_Clicked(object sender, EventArgs e)
         {
-            modalFrameRequest.IsVisible= false;
+            modalFrameRequest.IsVisible= false;            
         }
 
         private void entrySearchRequest_TextChanged(object sender, TextChangedEventArgs e)
@@ -182,10 +177,10 @@ namespace NetEye.pages
 
         public void Sort()
         {
-            var filteredRequests = requests;
+            var filteredRequests = fUser.RepairRequestsReceived;
             if (!string.IsNullOrEmpty(entrySearchRequest.Text))
             {
-                filteredRequests = requests.Where(o => o.TechEquipmentId.Contains(entrySearchRequest.Text)).ToList();
+                filteredRequests = fUser.RepairRequestsReceived.Where(o => o.TechEquipmentId.Contains(entrySearchRequest.Text)).ToList();
                 if (filteredRequests.Count == 0) 
                 {
                     frameNotFound.IsVisible= true;
@@ -196,7 +191,7 @@ namespace NetEye.pages
                 }
             }            
            
-            var filtererBySearchAndStatus = filteredRequests.Where(o => o.Status == picker_status.SelectedIndex.ToString());
+            var filtererBySearchAndStatus = filteredRequests.Where(o => o.Status == picker_status.SelectedIndex);
             requestsList.ItemsSource = filtererBySearchAndStatus;
         }
 
@@ -208,6 +203,11 @@ namespace NetEye.pages
         protected override bool OnBackButtonPressed()
         {
             return true;
-        }       
+        }
+
+        private void ImageButton_Clicked_1(object sender, EventArgs e)
+        {
+            modalFrameAfterScanning.IsVisible= false;
+        }
     }
 }

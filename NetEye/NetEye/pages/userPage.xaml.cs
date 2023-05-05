@@ -102,14 +102,7 @@ namespace NetEye.pages
                 frameNotFound.IsVisible = true;
                 labelNotFound.Text = "Вы пока не подавали заявок, сделайте это отсканировав QR код";
             }
-        }
-
-        public class Request
-        {
-            public string TechEquipmentId { get; set; }
-            public string Description { get; set; }
-            public string Status { get; set; }
-        }
+        }       
 
 
         private async void OnExButtonClicked(object sender, EventArgs e) // Выход

@@ -97,11 +97,51 @@
                             <Label Text="Дата:" FontSize="16" TextColor="Black" FontFamily="ur"/>
                             <Label Text="404" x:Name="modalDate" TextColor="#839BFF" FontFamily="ur" FontSize="16"/>
                         </StackLayout>
+                        <StackLayout Orientation="Horizontal" Padding="10">
+                            <Label Text="Статус:" VerticalOptions="Center" FontSize="16" TextColor="Black"
+                                   FontFamily="ur"/>
+                            <Frame Padding="0,-18,0,-5" CornerRadius="5" HasShadow="True">
+                                <Picker Visual="Material" TextColor="Black" WidthRequest="150">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type="{x:Type x:String}">
+                                            <x:String>Принята</x:String>
+                                            <x:String>В работе</x:String>
+                                            <x:String>Отменена</x:String>
+                                            <x:String>Архив</x:String>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
+                            </Frame>
+                        </StackLayout>
                         <Button x:Name="btnShowTechEquipment" Text="Сведения об оборудовании" FontFamily="ur" Margin="10"
                                 BackgroundColor="#839BFF" CornerRadius="10" TextColor="White"/>
                     </StackLayout>
                 </pancake:PancakeView>
 
+                <pancake:PancakeView CornerRadius="12" x:Name="modalFrameAfterScanning" AbsoluteLayout.LayoutFlags="PositionProportional"
+                   AbsoluteLayout.LayoutBounds="0.5,1" HorizontalOptions="FillAndExpand" Padding="0"
+                   IsClippedToBounds="true" IsVisible="false">
+                    <pancake:PancakeView.GestureRecognizers>
+                        <SwipeGestureRecognizer Direction="Left" />
+                    </pancake:PancakeView.GestureRecognizers>
+                    <StackLayout BackgroundColor="White">
+                        <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7">
+                            <Label Text="ID:" TextColor="White" FontFamily="ur" FontSize="22" VerticalOptions="Center"/>
+                            <Label Text="404" TextColor="White" FontFamily="ur" FontSize="22" x:Name="modalAfterScanningLabelIdRequest" 
+                                   VerticalOptions="Center"/>
+                            <ImageButton Source="res/image/cancel_button.png" WidthRequest="35" 
+                                         HeightRequest="35" CornerRadius="20" Padding="-25" 
+                                         HorizontalOptions="EndAndExpand" BackgroundColor="White"
+                                         Clicked="ImageButton_Clicked_1"/>
+                        </StackLayout>
+                        <StackLayout Padding="10,8" BackgroundColor="White">
+                            <Button x:Name="btnGoToTechEquipment" Text="Сведения об оборудовании" FontFamily="ur" Margin="10"
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White"/>
+                            <Button x:Name="btnGoToAddRepairRequest" Text="Сообщить о неисправности" FontFamily="ur" Margin="10"
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White"/>
+                        </StackLayout>
+                    </StackLayout>
+                </pancake:PancakeView>
             </AbsoluteLayout>
 
         </Frame>
