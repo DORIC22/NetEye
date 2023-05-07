@@ -244,6 +244,18 @@ namespace NetEye.res.service
             }
         }
 
+        public void DeleteTechEquipment(TechEquipment techEquipment)
+        {
+            var request = new RestRequest($"techequipment/{techEquipment.Id}");
+            var response = _httpClient.Delete(request);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                UpdateTokens();
+                DeleteTechEquipment(techEquipment);
+            }
+        }
+
         #endregion
 
         #region HttpMethods

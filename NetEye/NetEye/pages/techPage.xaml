@@ -100,8 +100,9 @@
                         <StackLayout Orientation="Horizontal" Padding="10">
                             <Label Text="Статус:" VerticalOptions="Center" FontSize="16" TextColor="Black"
                                    FontFamily="ur"/>
-                            <Frame Padding="0,-18,0,-5" CornerRadius="5" HasShadow="True">
-                                <Picker Visual="Material" TextColor="Black" WidthRequest="150">
+                            <Frame Padding="0,-18,0,0" CornerRadius="5" HasShadow="True">
+                                <Picker Visual="Material" TextColor="#839BFF" WidthRequest="150" 
+                                        HorizontalTextAlignment="Center" x:Name="pickerStatus" SelectedIndexChanged="pickerStatus_SelectedIndexChanged">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">
                                             <x:String>Принята</x:String>
@@ -114,7 +115,7 @@
                             </Frame>
                         </StackLayout>
                         <Button x:Name="btnShowTechEquipment" Text="Сведения об оборудовании" FontFamily="ur" Margin="10"
-                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White"/>
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="btnGoToTechEquipment_Clicked"/>
                     </StackLayout>
                 </pancake:PancakeView>
 
@@ -136,10 +137,38 @@
                         </StackLayout>
                         <StackLayout Padding="10,8" BackgroundColor="White">
                             <Button x:Name="btnGoToTechEquipment" Text="Сведения об оборудовании" FontFamily="ur" Margin="10"
-                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White"/>
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="btnGoToTechEquipment_Clicked"/>
                             <Button x:Name="btnGoToAddRepairRequest" Text="Сообщить о неисправности" FontFamily="ur" Margin="10"
-                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White"/>
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="btnGoToAddRepairRequest_Clicked"/>
                         </StackLayout>
+                    </StackLayout>
+                </pancake:PancakeView>
+
+                <pancake:PancakeView CornerRadius="12" x:Name="modalFrameAddRepairRequest" AbsoluteLayout.LayoutFlags="PositionProportional"
+                   AbsoluteLayout.LayoutBounds="0.5,1" HorizontalOptions="FillAndExpand" Padding="0"
+                   IsClippedToBounds="true" IsVisible="false">
+                    <pancake:PancakeView.GestureRecognizers>
+                        <SwipeGestureRecognizer Direction="Left" />
+                    </pancake:PancakeView.GestureRecognizers>
+                    <StackLayout BackgroundColor="White" HorizontalOptions="FillAndExpand">
+                        <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7" HorizontalOptions="FillAndExpand">
+                            <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7" HorizontalOptions="FillAndExpand">
+                                <Label Text="ID:" TextColor="White" FontFamily="ur" FontSize="22" VerticalOptions="Center"/>
+                                <Label Text="404" TextColor="White" FontFamily="ur" FontSize="22" x:Name="modalAddRepairRequestTechID" 
+                                   VerticalOptions="Center"/>
+                                <ImageButton Source="res/image/cancel_button.png" WidthRequest="35" 
+                                         HeightRequest="35" CornerRadius="20" Padding="-25" 
+                                         HorizontalOptions="EndAndExpand" BackgroundColor="White"
+                                         Clicked="ImageButton_Clicked_2"/>
+                            </StackLayout>
+                        </StackLayout>
+                        <StackLayout Padding="10">
+                            <Editor FontFamily="ur" PlaceholderColor="Gray" Placeholder="Введите тут описание проблемы" 
+                            TextColor="Black" BackgroundColor="White" HeightRequest="100" MaxLength="200" x:Name="editorDescriptionRequest" 
+                                />
+                        </StackLayout>
+                        <Button x:Name="BtnAddRepairRequest" Text="Сообщить о неисправности" FontFamily="ur" Margin="10,5"
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="BtnAddRepairRequest_Clicked"/>
                     </StackLayout>
                 </pancake:PancakeView>
             </AbsoluteLayout>
@@ -147,11 +176,95 @@
         </Frame>
     </ContentPage>
     <ContentPage Title="Оборудование">
-        <StackLayout>
-            <Label Text="Пораже123е 1"/>
-            <Label Text="Пораж123ие 1"/>
-            <Label Text="Пораже123ие 1"/>
-        </StackLayout>
+        <Frame Padding="10">
+            <Frame.Background>
+                <LinearGradientBrush EndPoint="0,1">
+                    <GradientStop Color="white" Offset="0.5" />
+                    <GradientStop Color="#E5EAFF" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Frame.Background>
+            <StackLayout>
+                <StackLayout x:Name="frameSearchTechEquipment" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                    <Label Text="Поиск:" TextColor="Black" VerticalOptions="Center" FontFamily="ur" FontSize="18"/>
+                    <Entry BackgroundColor="White" Placeholder="ID" HorizontalOptions="FillAndExpand" 
+                               Visual="Material" WidthRequest="120" FontFamily="ur" MaxLength="50" 
+                               x:Name="entrySearchTechEquipment" TextChanged="entrySearchTechEquipment_TextChanged"/>
+                    <Frame Padding="4" HorizontalOptions="FillAndExpand" CornerRadius="10" HasShadow="False" BorderColor="Black" BackgroundColor="#839BFF">
+                        <Picker Title="Статус:" Margin="0,-1" BackgroundColor="#839BFF" WidthRequest="100"
+                                    TextColor="Black" TitleColor="Gray" FontFamily="ur" x:Name="picker_status_TechEquipment">
+                            <Picker.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>Компьютер</x:String>
+                                    <x:String>Принтер</x:String>
+                                    <x:String>Камера</x:String>
+                                </x:Array>
+                            </Picker.ItemsSource>
+                        </Picker>
+                    </Frame>
+                </StackLayout>
+                <AbsoluteLayout>
+                    <CollectionView x:Name="techEquipmentCollection" SelectionMode="Single" HorizontalOptions="CenterAndExpand" 
+                            VerticalOptions="StartAndExpand" Margin="0,0,0,0" SelectionChanged="techEquipmentCollection_SelectionChanged">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="#F4F4F3" HasShadow="True" Padding="0" CornerRadius="16" BorderColor="#839BFF">
+                                    <StackLayout>
+                                        <StackLayout Orientation="Horizontal" BackgroundColor="#839BFF" Padding="8">
+                                            <Label Text="{Binding Id}" FontFamily="ur" TextColor="Black" FontSize="20"
+                                               HorizontalOptions="CenterAndExpand"/>
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal" Padding="5,3">
+                                            <Label Text="IP:" FontFamily="ur" TextColor="#839BFF"/>
+                                            <Label Text="{Binding IpAddress}" FontFamily="ur" TextColor="Black" MaxLines="2"/>
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal" Padding="5,3">
+                                            <Label Text="Тип:" FontFamily="ur" TextColor="#839BFF"/>
+                                            <Label Text="{Binding Type}" FontFamily="ur" TextColor="Black"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" 
+                           ItemSpacing="5"/>
+                        </CollectionView.ItemsLayout>
+                    </CollectionView>
+                    <pancake:PancakeView CornerRadius="12" x:Name="modalFrameDetailsTechEquipment" AbsoluteLayout.LayoutFlags="PositionProportional"
+                   AbsoluteLayout.LayoutBounds="0.5,1" HorizontalOptions="FillAndExpand" Padding="0"
+                   IsClippedToBounds="true" IsVisible="true">
+                        <pancake:PancakeView.GestureRecognizers>
+                            <SwipeGestureRecognizer Direction="Left" />
+                        </pancake:PancakeView.GestureRecognizers>
+                        <StackLayout BackgroundColor="White" HorizontalOptions="FillAndExpand">
+                            <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7" HorizontalOptions="FillAndExpand">
+                                <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7" HorizontalOptions="FillAndExpand">
+                                    <Label Text="ID:" TextColor="White" FontFamily="ur" FontSize="22" VerticalOptions="Center"/>
+                                    <Label Text="404" TextColor="White" FontFamily="ur" FontSize="22" x:Name="IdDetailsTechEquipment" 
+                                   VerticalOptions="Center"/>
+                                    <ImageButton Source="res/image/cancel_button.png" WidthRequest="35" 
+                                         HeightRequest="35" CornerRadius="20" Padding="-25" 
+                                         HorizontalOptions="EndAndExpand" BackgroundColor="White"
+                                         Clicked="ImageButton_Clicked_3"/>
+                                </StackLayout>
+                            </StackLayout>
+                            <StackLayout Padding="10" Orientation="Horizontal">
+                                <Label Text="IP:" TextColor="black" FontFamily="ur" FontSize="18" VerticalOptions="Center"/>
+                                <Label Text="404" TextColor="#839BFF" FontFamily="ur" FontSize="18" x:Name="IpDetailsTechEquipment"/>
+                            </StackLayout>
+                            <StackLayout Padding="10" Orientation="Horizontal">
+                                <Label Text="Тип:" TextColor="black" FontFamily="ur" FontSize="18" VerticalOptions="Center"/>
+                                <Label Text="404" TextColor="#839BFF" FontFamily="ur" FontSize="18" x:Name="TypeDetailsTechEquipment"/>
+                            </StackLayout>
+                            <Button x:Name="BtnSadeNewIp" Text="Изменить ip" FontFamily="ur" Margin="10,0,10,0"
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="BtnSadeNewIp_Clicked"/>
+                            <Button x:Name="BtnDeleteTechEquipment" Text="Удалить" FontFamily="ur" Margin="10,0,10,10"
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="BtnDeleteTechEquipment_Clicked"/>
+                        </StackLayout>
+                    </pancake:PancakeView>
+                </AbsoluteLayout>
+            </StackLayout>
+        </Frame>
     </ContentPage>
     <ContentPage Title="Сканирование" Appearing="ContentPage_Appearing"/>
 </TabbedPage>

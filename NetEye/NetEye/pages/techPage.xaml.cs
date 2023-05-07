@@ -2,40 +2,50 @@
 using NetEye.res.service;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using static NetEye.pages.userPage;
 
 namespace NetEye.pages
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class techPage : TabbedPage
+    public partial class techPage : Xamarin.Forms.TabbedPage
     {
         TechEquipment equipment = new TechEquipment();
+        RepairRequest selectedRequest = new RepairRequest();
+        TechEquipment selectedTechEquipment = new TechEquipment();
         private HttpClientWithJwt _httpClient;
         AuthUser fUser = new AuthUser();
+        List<TechEquipment> repairRequestList = new List<TechEquipment>();
         RepairRequest repairRequests = null;
         public techPage (AuthUser user)
         {
             InitializeComponent();
             _httpClient = HttpClientWithJwt.GetInstance();
             fUser = user;
-            requestsList.ItemsSource = fUser.RepairRequestsReceived;
+            if (fUser.RepairRequestsReceived == null)
+            {
+                RepairRequest request = new RepairRequest();
+                fUser.RepairRequestsReceived = new List<RepairRequest>();
+            }
+            requestsList.ItemsSource = fUser.RepairRequestsReceived;           
+            repairRequestList = _httpClient.GetAllTechEquipment();
+            techEquipmentCollection.ItemsSource= repairRequestList;
 
             picker_status.SelectedIndex = 0;
-            Sort();            
+            //Sort();            
             #region Ширина модалки
             modalFrameRequest.WidthRequest = App.Current.MainPage.Width - 20;
             frameSearchRequests.WidthRequest = App.Current.MainPage.Width - 20;
             modalFrameAfterScanning.WidthRequest = App.Current.MainPage.Width - 20;
-            #endregion 
+            modalFrameAddRepairRequest.WidthRequest = App.Current.MainPage.Width - 20;
+            modalFrameDetailsTechEquipment.WidthRequest = App.Current.MainPage.Width - 20;
+            #endregion
             #region navBar
-            NavigationPage.SetHasBackButton(this, false);
+            Xamarin.Forms.NavigationPage.SetHasBackButton(this, false);
 
 
             var titleView = new StackLayout();
@@ -90,7 +100,7 @@ namespace NetEye.pages
             titleView.Children.Add(iconImage);
 
 
-            NavigationPage.SetTitleView(this, titleView);
+            Xamarin.Forms.NavigationPage.SetTitleView(this, titleView);
             #endregion
         }
 
@@ -134,6 +144,7 @@ namespace NetEye.pages
                 equipment = _httpClient.GetTechEquipmentById(resultScan);
                 if (equipment != null)
                 {
+                    modalFrameAddRepairRequest.IsVisible = false;
                     modalFrameRequest.IsVisible = false;
                     modalFrameAfterScanning.IsVisible = true;
                     modalAfterScanningLabelIdRequest.Text = resultScan;
@@ -150,18 +161,20 @@ namespace NetEye.pages
 
         private void requestsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            modalFrameAddRepairRequest.IsVisible = false;
             modalFrameAfterScanning.IsVisible = false;
-            var selectedRequest = e.CurrentSelection[0] as RepairRequest;
+            selectedRequest = e.CurrentSelection[0] as RepairRequest;
             if (selectedRequest != null)
             {
                 modalFrameRequest.IsVisible= true;
                 modalDescription.Text = selectedRequest.Description;  
                 modalDate.Text = selectedRequest.CreatedDate.ToString();
                 modalLabelIdRequest.Text = selectedRequest.Id.ToString();
+                pickerStatus.SelectedIndex = selectedRequest.Status;
 
                 User user = _httpClient.GetUserById(selectedRequest.UserFromId);
                 modalUserFrom.Text = user.FullName;
-                requestsList.SelectedItem = SelectableItemsView.EmptyViewProperty;
+                //requestsList.SelectedItem = SelectableItemsView.EmptyViewProperty;
             }
         }
 
@@ -189,10 +202,36 @@ namespace NetEye.pages
                 {
                     frameNotFound.IsVisible = false;
                 }
-            }            
-           
-            var filtererBySearchAndStatus = filteredRequests.Where(o => o.Status == picker_status.SelectedIndex);
-            requestsList.ItemsSource = filtererBySearchAndStatus;
+            }
+
+            if (filteredRequests.Count != 0)
+            {
+                var filtererBySearchAndStatus = filteredRequests.Where(o => o.Status == picker_status.SelectedIndex);
+                requestsList.ItemsSource = filtererBySearchAndStatus;
+            }
+            else
+            {
+                
+            }
+        }
+
+        public void SortEquipment()
+        {
+            var filteredTechEquipment = repairRequestList;
+            if (!string.IsNullOrEmpty(entrySearchTechEquipment.Text))
+            {
+                filteredTechEquipment = repairRequestList.Where(o => o.Id.Contains(entrySearchTechEquipment.Text)).ToList();
+                if (filteredTechEquipment.Count == 0)
+                {
+                    //
+                }
+                else
+                {
+                    //
+                }
+            }
+
+            techEquipmentCollection.ItemsSource = filteredTechEquipment;
         }
 
         private void picker_status_SelectedIndexChanged(object sender, EventArgs e)
@@ -208,6 +247,137 @@ namespace NetEye.pages
         private void ImageButton_Clicked_1(object sender, EventArgs e)
         {
             modalFrameAfterScanning.IsVisible= false;
+        }
+
+        private async void pickerStatus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (selectedRequest != null)
+            {
+                Xamarin.Forms.Picker picker = sender as Xamarin.Forms.Picker;
+                selectedRequest.Status = picker.SelectedIndex;
+                try
+                {
+                    _httpClient.PutRepairRequest(selectedRequest);
+                }
+                catch (Exception ex) 
+                {
+                    await DisplayAlert("Что-то пошло не так","Мы уже работаем над исправлением ситуации, попробуйте позже","Ок");
+                }
+                fUser.RepairRequestsReceived.Remove(selectedRequest);
+                fUser.RepairRequestsReceived.Add(selectedRequest);
+                requestsList.ItemsSource = null;
+                requestsList.ItemsSource = fUser.RepairRequestsReceived;
+                Sort();
+                DependencyService.Get<IToast>().LongToast("Статус: " + picker.SelectedItem);
+            }
+        }
+
+        private void btnGoToAddRepairRequest_Clicked(object sender, EventArgs e)
+        {
+            modalAddRepairRequestTechID.Text = equipment.Id.ToString();
+            modalFrameAfterScanning.IsVisible= false;
+            modalFrameRequest.IsVisible= false;
+            modalFrameAddRepairRequest.IsVisible = true;
+        }
+
+        private void ImageButton_Clicked_2(object sender, EventArgs e)
+        {
+            modalFrameAddRepairRequest.IsVisible= false;
+        }
+
+        private void BtnAddRepairRequest_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                RepairRequest repairRequest = new RepairRequest();
+                repairRequest.CreatedDate = DateTime.Now;
+                repairRequest.UserFromId = Convert.ToInt32(App.Current.Properties["UserId"]);
+                repairRequest.Description = editorDescriptionRequest.Text;
+                repairRequest.Status = 0;
+                repairRequest.TechEquipmentId = equipment.Id;
+                _httpClient.PostRepairRequest(repairRequest);
+                DependencyService.Get<IToast>().LongToast("Заявка успешно подана!");
+            }
+            catch(Exception ex)
+            {
+
+            }
+            modalFrameAddRepairRequest.IsVisible = false;
+        }
+
+        private void entrySearchTechEquipment_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            SortEquipment();
+        }
+
+        private void btnGoToTechEquipment_Clicked(object sender, EventArgs e)
+        {
+            tabbedPage.CurrentPage = tabbedPage.Children[1];
+            entrySearchTechEquipment.Text = selectedRequest.TechEquipmentId;
+            TechEquipment techEquipment = new TechEquipment();
+            techEquipment = repairRequestList.Where(o => o.Id == selectedRequest.TechEquipmentId).FirstOrDefault();
+            techEquipmentCollection.SelectedItem = techEquipment;
+        }
+
+        private void techEquipmentCollection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedTechEquipment = e.CurrentSelection[0] as TechEquipment;
+            modalFrameDetailsTechEquipment.IsVisible = true;
+            IdDetailsTechEquipment.Text = selectedTechEquipment.Id;
+            IpDetailsTechEquipment.Text = selectedTechEquipment.IpAddress;
+            TypeDetailsTechEquipment.Text = selectedTechEquipment.Type.ToString();
+        }
+
+        private async void BtnSadeNewIp_Clicked(object sender, EventArgs e)
+        {
+            string newIp = await DisplayPromptAsync(selectedTechEquipment.Id, "Введите новый IP:");
+
+            if (!string.IsNullOrWhiteSpace(newIp))
+            {
+                repairRequestList.Remove(selectedTechEquipment);
+                selectedTechEquipment.IpAddress = newIp;
+                _httpClient.PutTechEquipment(selectedTechEquipment);
+                repairRequestList.Add(selectedTechEquipment);
+                techEquipmentCollection.ItemsSource = null;
+                techEquipmentCollection.ItemsSource = repairRequestList;
+                modalFrameDetailsTechEquipment.IsVisible=false;
+                SortEquipment();
+                DependencyService.Get<IToast>().LongToast("Новый IP:" + selectedTechEquipment.IpAddress);
+            }
+            else
+            {
+                DependencyService.Get<IToast>().ShortToast("Не обновлено");
+            }
+
+        }
+
+        private void ImageButton_Clicked_3(object sender, EventArgs e)
+        {
+            modalFrameDetailsTechEquipment.IsVisible = false;
+        }
+
+        private async void BtnDeleteTechEquipment_Clicked(object sender, EventArgs e)
+        {
+            bool answer = await DisplayAlert("Вы уверены?", "Удалить " + selectedTechEquipment.Id + " ?\nУдаление оборудования " +
+                "приведет к удалению связанных с ним заявок.", "Да" , "Нет");
+            if (answer)
+            {
+                _httpClient.DeleteTechEquipment(selectedTechEquipment);
+                repairRequestList.Remove(selectedTechEquipment);
+                techEquipmentCollection.ItemsSource = null;
+                techEquipmentCollection.ItemsSource = repairRequestList;
+
+                fUser.RepairRequestsReceived.Remove(selectedRequest);
+                requestsList.ItemsSource= null;
+                requestsList.ItemsSource= fUser.RepairRequestsReceived;
+
+                modalFrameDetailsTechEquipment.IsVisible = false;
+                modalFrameRequest.IsVisible= false;
+                SortEquipment(); //requestsList.ItemsSource = fUser.RepairRequestsReceived;
+                Sort();
+
+                DependencyService.Get<IToast>().LongToast("Удалено");
+            }           
         }
     }
 }
