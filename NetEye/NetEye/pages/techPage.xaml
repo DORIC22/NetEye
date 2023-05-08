@@ -27,8 +27,8 @@
                                     <x:Array Type="{x:Type x:String}">
                                         <x:String>Принята</x:String>
                                         <x:String>В работе</x:String>
-                                        <x:String>Отменена</x:String>
                                         <x:String>Архив</x:String>
+                                        <x:String>Отменена</x:String>
                                     </x:Array>
                                 </Picker.ItemsSource>
                             </Picker>
@@ -66,7 +66,8 @@
                 
                 <StackLayout x:Name="frameNotFound" IsVisible="false"
                          AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.5,0.1">
-                    <Label x:Name="labelNotFound" Text="Ничего не найдено, проверьте условия поиска." FontSize="14" HorizontalOptions="CenterAndExpand" FontFamily="uli"/>
+                    <Label x:Name="labelNotFound" Text="Ничего не найдено, проверьте условия поиска." TextColor="Black"
+                            FontSize="14" HorizontalOptions="CenterAndExpand" FontFamily="uli"/>
                 </StackLayout>
 
                 <pancake:PancakeView CornerRadius="12" x:Name="modalFrameRequest" AbsoluteLayout.LayoutFlags="PositionProportional"
@@ -107,13 +108,21 @@
                                         <x:Array Type="{x:Type x:String}">
                                             <x:String>Принята</x:String>
                                             <x:String>В работе</x:String>
-                                            <x:String>Отменена</x:String>
                                             <x:String>Архив</x:String>
+                                            <x:String>Отменена</x:String>
                                         </x:Array>
                                     </Picker.ItemsSource>
                                 </Picker>
                             </Frame>
                         </StackLayout>
+                        <Frame x:Name="frameRepairNote" BackgroundColor="white" CornerRadius="10" Padding="5" Margin="5" HasShadow="False" BorderColor="Black" IsVisible="false">
+                            <StackLayout>
+                                <Label Text="Примечание (необязательно):" VerticalOptions="Center" FontSize="16" TextColor="Black"
+                                       FontFamily="ur"/>
+                                <Editor Placeholder="Введите тут примечание" MaxLength="200" HeightRequest="100" x:Name="editorRepairNote"
+                                        Unfocused="editorRepairNote_Unfocused" TextColor="Black"/>
+                            </StackLayout>
+                        </Frame>
                         <Button x:Name="btnShowTechEquipment" Text="Сведения об оборудовании" FontFamily="ur" Margin="10"
                                 BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="btnGoToTechEquipment_Clicked"/>
                     </StackLayout>
@@ -189,18 +198,6 @@
                     <Entry BackgroundColor="White" Placeholder="ID" HorizontalOptions="FillAndExpand" 
                                Visual="Material" WidthRequest="120" FontFamily="ur" MaxLength="50" 
                                x:Name="entrySearchTechEquipment" TextChanged="entrySearchTechEquipment_TextChanged"/>
-                    <Frame Padding="4" HorizontalOptions="FillAndExpand" CornerRadius="10" HasShadow="False" BorderColor="Black" BackgroundColor="#839BFF">
-                        <Picker Title="Статус:" Margin="0,-1" BackgroundColor="#839BFF" WidthRequest="100"
-                                    TextColor="Black" TitleColor="Gray" FontFamily="ur" x:Name="picker_status_TechEquipment">
-                            <Picker.ItemsSource>
-                                <x:Array Type="{x:Type x:String}">
-                                    <x:String>Компьютер</x:String>
-                                    <x:String>Принтер</x:String>
-                                    <x:String>Камера</x:String>
-                                </x:Array>
-                            </Picker.ItemsSource>
-                        </Picker>
-                    </Frame>
                 </StackLayout>
                 <AbsoluteLayout>
                     <CollectionView x:Name="techEquipmentCollection" SelectionMode="Single" HorizontalOptions="CenterAndExpand" 
@@ -232,7 +229,7 @@
                     </CollectionView>
                     <pancake:PancakeView CornerRadius="12" x:Name="modalFrameDetailsTechEquipment" AbsoluteLayout.LayoutFlags="PositionProportional"
                    AbsoluteLayout.LayoutBounds="0.5,1" HorizontalOptions="FillAndExpand" Padding="0"
-                   IsClippedToBounds="true" IsVisible="true">
+                   IsClippedToBounds="true" IsVisible="false">
                         <pancake:PancakeView.GestureRecognizers>
                             <SwipeGestureRecognizer Direction="Left" />
                         </pancake:PancakeView.GestureRecognizers>
@@ -266,5 +263,7 @@
             </StackLayout>
         </Frame>
     </ContentPage>
-    <ContentPage Title="Сканирование" Appearing="ContentPage_Appearing"/>
+    <ContentPage Title="Сканирование" Appearing="ContentPage_Appearing" BackgroundColor="white">
+        <Image Source="res/image/iconQR.png"/>
+    </ContentPage>
 </TabbedPage>

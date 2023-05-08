@@ -218,7 +218,11 @@ namespace NetEye.pages
                     }                    
                     modalId.Text = selectedRequest.TechEquipmentId;
                     modalDescription.Text = selectedRequest.Description;
-                    modalDescriptionCancel.Text = selectedRequest.RepairNote;
+                    if (!string.IsNullOrEmpty(selectedRequest.RepairNote))
+                        modalDescriptionCancel.Text = selectedRequest.RepairNote;
+                    else
+                        modalDescriptionCancel.Text = "Не указано.";
+
                 }
                 else
                 {

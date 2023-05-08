@@ -175,6 +175,21 @@ namespace NetEye.pages
                 User user = _httpClient.GetUserById(selectedRequest.UserFromId);
                 modalUserFrom.Text = user.FullName;
                 //requestsList.SelectedItem = SelectableItemsView.EmptyViewProperty;
+
+                //
+                if (pickerStatus.SelectedIndex == 2 || pickerStatus.SelectedIndex == 3)
+                {
+                    if (string.IsNullOrEmpty(selectedRequest.RepairNote))
+                        selectedRequest.RepairNote = "";
+                    editorRepairNote.Text = selectedRequest.RepairNote;
+                    frameRepairNote.IsVisible = true;
+                }
+                else
+                {
+                    frameRepairNote.IsVisible = false;
+                }
+                //
+
             }
         }
 
@@ -203,6 +218,17 @@ namespace NetEye.pages
                     frameNotFound.IsVisible = false;
                 }
             }
+            else
+            {
+                if (filteredRequests.Count == 0)
+                {
+                    frameNotFound.IsVisible = true;
+                }
+                else
+                {
+                    frameNotFound.IsVisible = false;
+                }
+            }
 
             if (filteredRequests.Count != 0)
             {
@@ -211,7 +237,8 @@ namespace NetEye.pages
             }
             else
             {
-                
+                var filtererBySearchAndStatus = filteredRequests.Where(o => o.Status == picker_status.SelectedIndex);
+                requestsList.ItemsSource = filtererBySearchAndStatus;
             }
         }
 
@@ -268,7 +295,7 @@ namespace NetEye.pages
                 requestsList.ItemsSource = null;
                 requestsList.ItemsSource = fUser.RepairRequestsReceived;
                 Sort();
-                DependencyService.Get<IToast>().LongToast("Статус: " + picker.SelectedItem);
+                DependencyService.Get<IToast>().LongToast("Статус: " + picker.SelectedItem);                
             }
         }
 
@@ -378,6 +405,27 @@ namespace NetEye.pages
 
                 DependencyService.Get<IToast>().LongToast("Удалено");
             }           
+        }
+
+        private void editorRepairNote_Unfocused(object sender, FocusEventArgs e)
+        {
+            fUser.RepairRequestsReceived.Remove(selectedRequest);
+            if (string.IsNullOrEmpty(editorRepairNote.Text))
+                editorRepairNote.Text = "";
+            try
+            {
+                selectedRequest.RepairNote = editorRepairNote.Text;
+                _httpClient.PutRepairRequest(selectedRequest);
+                DependencyService.Get<IToast>().ShortToast("Примечание сохранено");
+            }
+            catch(Exception ex)
+            {
+
+            }
+            fUser.RepairRequestsReceived.Add(selectedRequest);
+            requestsList.ItemsSource= null;
+            requestsList.ItemsSource= fUser.RepairRequestsReceived;
+            Sort();
         }
     }
 }
