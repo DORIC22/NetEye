@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -19,7 +21,7 @@ namespace NetEye.pages
         TechEquipment selectedTechEquipment = new TechEquipment();
         private HttpClientWithJwt _httpClient;
         AuthUser fUser = new AuthUser();
-        List<TechEquipment> repairRequestList = new List<TechEquipment>();
+        List<TechEquipment> techEquipmentList = new List<TechEquipment>();
         RepairRequest repairRequests = null;
         public techPage (AuthUser user)
         {
@@ -32,12 +34,13 @@ namespace NetEye.pages
                 fUser.RepairRequestsReceived = new List<RepairRequest>();
             }
             requestsList.ItemsSource = fUser.RepairRequestsReceived;           
-            repairRequestList = _httpClient.GetAllTechEquipment();
-            techEquipmentCollection.ItemsSource= repairRequestList;
+            techEquipmentList = _httpClient.GetAllTechEquipment();
+            techEquipmentCollection.ItemsSource= techEquipmentList;
 
             picker_status.SelectedIndex = 0;
             //Sort();            
             #region Ширина модалки
+            modalFrameAddTechEquipment.WidthRequest = App.Current.MainPage.Width - 20;
             modalFrameRequest.WidthRequest = App.Current.MainPage.Width - 20;
             frameSearchRequests.WidthRequest = App.Current.MainPage.Width - 20;
             modalFrameAfterScanning.WidthRequest = App.Current.MainPage.Width - 20;
@@ -138,7 +141,6 @@ namespace NetEye.pages
                 PropertyNameCaseInsensitive = true
             };
 
-
             if (resultScan != null && resultScan != "")
             {
                 equipment = _httpClient.GetTechEquipmentById(resultScan);
@@ -148,15 +150,27 @@ namespace NetEye.pages
                     modalFrameRequest.IsVisible = false;
                     modalFrameAfterScanning.IsVisible = true;
                     modalAfterScanningLabelIdRequest.Text = resultScan;
+                    tabbedPage.CurrentPage = tabbedPage.Children[0];
                 }
                 else
                 {
                     tabbedPage.CurrentPage = tabbedPage.Children[0];
                     bool answer = await DisplayAlert("Уведомление", "Данное оборудование не " +
                     "добавлено в базу данных.\nДобавить сейчас?", "Да", "Нет");
+                    if (answer)
+                    {
+                        modalFrameDetailsTechEquipment.IsVisible= false;
+                        tabbedPage.CurrentPage = tabbedPage.Children[1];
+                        pickerTypeTechEquipmentForAdd.SelectedIndex= 0;
+                        modalFrameAddTechEquipment.IsVisible = true;
+                        modalFrameAddTechEquipmentLabelId.Text = resultScan;
+                    }
                 }
-            }            
-            tabbedPage.CurrentPage = tabbedPage.Children[0];
+            }
+            else
+            {
+                tabbedPage.CurrentPage = tabbedPage.Children[0];
+            }
         }
 
         private void requestsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -171,6 +185,12 @@ namespace NetEye.pages
                 modalDate.Text = selectedRequest.CreatedDate.ToString();
                 modalLabelIdRequest.Text = selectedRequest.Id.ToString();
                 pickerStatus.SelectedIndex = selectedRequest.Status;
+                if (pickerStatus.SelectedIndex == 2 || pickerStatus.SelectedIndex == 3)
+                {
+                    pickerStatus.IsEnabled= false;
+                }
+                else
+                    pickerStatus.IsEnabled = true;
 
                 User user = _httpClient.GetUserById(selectedRequest.UserFromId);
                 modalUserFrom.Text = user.FullName;
@@ -244,10 +264,10 @@ namespace NetEye.pages
 
         public void SortEquipment()
         {
-            var filteredTechEquipment = repairRequestList;
+            var filteredTechEquipment = techEquipmentList;
             if (!string.IsNullOrEmpty(entrySearchTechEquipment.Text))
             {
-                filteredTechEquipment = repairRequestList.Where(o => o.Id.Contains(entrySearchTechEquipment.Text)).ToList();
+                filteredTechEquipment = techEquipmentList.Where(o => o.Id.Contains(entrySearchTechEquipment.Text)).ToList();
                 if (filteredTechEquipment.Count == 0)
                 {
                     //
@@ -337,14 +357,7 @@ namespace NetEye.pages
             SortEquipment();
         }
 
-        private void btnGoToTechEquipment_Clicked(object sender, EventArgs e)
-        {
-            tabbedPage.CurrentPage = tabbedPage.Children[1];
-            entrySearchTechEquipment.Text = selectedRequest.TechEquipmentId;
-            TechEquipment techEquipment = new TechEquipment();
-            techEquipment = repairRequestList.Where(o => o.Id == selectedRequest.TechEquipmentId).FirstOrDefault();
-            techEquipmentCollection.SelectedItem = techEquipment;
-        }
+        
 
         private void techEquipmentCollection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -359,21 +372,28 @@ namespace NetEye.pages
         {
             string newIp = await DisplayPromptAsync(selectedTechEquipment.Id, "Введите новый IP:");
 
-            if (!string.IsNullOrWhiteSpace(newIp))
+            bool isIPAddres = false;
+            Match match = Regex.Match(newIp, @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
+            if (match.Success)
             {
-                repairRequestList.Remove(selectedTechEquipment);
+                isIPAddres = true;
+            }
+
+            if (isIPAddres)
+            {
+                techEquipmentList.Remove(selectedTechEquipment);
                 selectedTechEquipment.IpAddress = newIp;
                 _httpClient.PutTechEquipment(selectedTechEquipment);
-                repairRequestList.Add(selectedTechEquipment);
+                techEquipmentList.Add(selectedTechEquipment);
                 techEquipmentCollection.ItemsSource = null;
-                techEquipmentCollection.ItemsSource = repairRequestList;
+                techEquipmentCollection.ItemsSource = techEquipmentList;
                 modalFrameDetailsTechEquipment.IsVisible=false;
                 SortEquipment();
-                DependencyService.Get<IToast>().LongToast("Новый IP:" + selectedTechEquipment.IpAddress);
+                DependencyService.Get<IToast>().LongToast("Новый IP: " + selectedTechEquipment.IpAddress);
             }
             else
             {
-                DependencyService.Get<IToast>().ShortToast("Не обновлено");
+                DependencyService.Get<IToast>().ShortToast("Не валидный IP, не обновлено");
             }
 
         }
@@ -390,9 +410,9 @@ namespace NetEye.pages
             if (answer)
             {
                 _httpClient.DeleteTechEquipment(selectedTechEquipment);
-                repairRequestList.Remove(selectedTechEquipment);
+                techEquipmentList.Remove(selectedTechEquipment);
                 techEquipmentCollection.ItemsSource = null;
-                techEquipmentCollection.ItemsSource = repairRequestList;
+                techEquipmentCollection.ItemsSource = techEquipmentList;
 
                 fUser.RepairRequestsReceived.Remove(selectedRequest);
                 requestsList.ItemsSource= null;
@@ -426,6 +446,63 @@ namespace NetEye.pages
             requestsList.ItemsSource= null;
             requestsList.ItemsSource= fUser.RepairRequestsReceived;
             Sort();
+        }
+
+        private void btnGoToTechEquipment_Clicked(object sender, EventArgs e)
+        {
+            tabbedPage.CurrentPage = tabbedPage.Children[1];
+            entrySearchTechEquipment.Text = selectedRequest.TechEquipmentId;
+            TechEquipment techEquipment = new TechEquipment();
+            techEquipment = techEquipmentList.Where(o => o.Id == selectedRequest.TechEquipmentId).FirstOrDefault();
+            techEquipmentCollection.SelectedItem = techEquipment;
+        }
+
+        private void btnGoToTechEquipment_Clicked_1(object sender, EventArgs e)
+        {
+            tabbedPage.CurrentPage = tabbedPage.Children[1];
+            entrySearchTechEquipment.Text = modalAfterScanningLabelIdRequest.Text;
+            TechEquipment techEquipment = new TechEquipment();
+            techEquipment = techEquipmentList.Where(o => o.Id == modalAfterScanningLabelIdRequest.Text).FirstOrDefault();
+            techEquipmentCollection.SelectedItem = techEquipment;
+        }
+
+        private void btnAddTechEquipment_Clicked(object sender, EventArgs e)
+        {
+            TechEquipment techEquipment = new TechEquipment();
+            techEquipment.Id = modalFrameAddTechEquipmentLabelId.Text;
+            techEquipment.IpAddress = entryIpAddressAddTechEquipment.Text;
+            techEquipment.Type = (TechType)pickerTypeTechEquipmentForAdd.SelectedIndex;
+
+            bool isIPAddres = false;
+            Match match = Regex.Match(techEquipment.IpAddress, @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
+            if (match.Success)
+            {
+                isIPAddres = true;
+            }
+
+            if (!isIPAddres)
+            {
+                DependencyService.Get<IToast>().LongToast("Не валидный IP, операция прервана");
+                return;
+            }
+
+            _httpClient.PostTechEquipment(techEquipment);
+            modalFrameAddTechEquipment.IsVisible= false;
+
+            techEquipmentList.Add(techEquipment);
+            techEquipmentCollection.ItemsSource = null;
+            techEquipmentCollection.ItemsSource = techEquipmentList;
+            DependencyService.Get<IToast>().LongToast("Успешно добавлено!");
+        }
+
+        private void pickerTypeTechEquipmentForAdd_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ImageButton_Clicked_4(object sender, EventArgs e)
+        {
+            modalFrameAddTechEquipment.IsVisible = false;
         }
     }
 }

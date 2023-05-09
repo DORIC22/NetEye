@@ -1,7 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:pancake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
+            xmlns:converters="clr-namespace:NetEye.res.Converters"
             x:Class="NetEye.pages.techPage" x:Name="tabbedPage" SelectedTabColor="Black" BarBackgroundColor="#839BFF" >
+    <TabbedPage.Resources>
+        <converters:NumberToRepairStatusConverter x:Key="NumberToRepairStatusConverter"/>
+    </TabbedPage.Resources>
   <!--Pages can be added as references or inline-->
     <ContentPage Title="Заявки">
         <Frame Padding="10">
@@ -52,7 +56,8 @@
                                     </StackLayout>
                                     <StackLayout Orientation="Horizontal">
                                         <Label Text="Статус:" FontFamily="ur" TextColor="#839BFF"/>
-                                        <Label Text="{Binding Status}" FontFamily="ur" TextColor="Black"/>
+                                        <Label Text="{Binding Status, Converter={StaticResource NumberToRepairStatusConverter}}"
+                                               FontFamily="ur" TextColor="Black"/>
                                     </StackLayout>
                                 </StackLayout>
                             </Frame>
@@ -102,7 +107,7 @@
                             <Label Text="Статус:" VerticalOptions="Center" FontSize="16" TextColor="Black"
                                    FontFamily="ur"/>
                             <Frame Padding="0,-18,0,0" CornerRadius="5" HasShadow="True">
-                                <Picker Visual="Material" TextColor="#839BFF" WidthRequest="150" 
+                                <Picker Visual="Material" TextColor="White" WidthRequest="150" BackgroundColor="#839BFF"
                                         HorizontalTextAlignment="Center" x:Name="pickerStatus" SelectedIndexChanged="pickerStatus_SelectedIndexChanged">
                                     <Picker.ItemsSource>
                                         <x:Array Type="{x:Type x:String}">
@@ -146,7 +151,7 @@
                         </StackLayout>
                         <StackLayout Padding="10,8" BackgroundColor="White">
                             <Button x:Name="btnGoToTechEquipment" Text="Сведения об оборудовании" FontFamily="ur" Margin="10"
-                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="btnGoToTechEquipment_Clicked"/>
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="btnGoToTechEquipment_Clicked_1"/>
                             <Button x:Name="btnGoToAddRepairRequest" Text="Сообщить о неисправности" FontFamily="ur" Margin="10"
                                 BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="btnGoToAddRepairRequest_Clicked"/>
                         </StackLayout>
@@ -193,12 +198,15 @@
                 </LinearGradientBrush>
             </Frame.Background>
             <StackLayout>
-                <StackLayout x:Name="frameSearchTechEquipment" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                    <Label Text="Поиск:" TextColor="Black" VerticalOptions="Center" FontFamily="ur" FontSize="18"/>
-                    <Entry BackgroundColor="White" Placeholder="ID" HorizontalOptions="FillAndExpand" 
-                               Visual="Material" WidthRequest="120" FontFamily="ur" MaxLength="50" 
-                               x:Name="entrySearchTechEquipment" TextChanged="entrySearchTechEquipment_TextChanged"/>
-                </StackLayout>
+                <Frame x:Name="frameSearchTechEquipment" HorizontalOptions="FillAndExpand" Padding="10" HasShadow="False" BorderColor="Black"
+                       CornerRadius="10">
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="Поиск:" TextColor="Black" VerticalOptions="Center" FontFamily="ur" FontSize="18"/>
+                        <Entry BackgroundColor="White" Placeholder="ID" HorizontalOptions="FillAndExpand" 
+                                   Visual="Material" WidthRequest="120" FontFamily="ur" MaxLength="50" 
+                                   x:Name="entrySearchTechEquipment" TextChanged="entrySearchTechEquipment_TextChanged"/>
+                    </StackLayout>
+                </Frame>
                 <AbsoluteLayout>
                     <CollectionView x:Name="techEquipmentCollection" SelectionMode="Single" HorizontalOptions="CenterAndExpand" 
                             VerticalOptions="StartAndExpand" Margin="0,0,0,0" SelectionChanged="techEquipmentCollection_SelectionChanged">
@@ -259,6 +267,43 @@
                                 BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="BtnDeleteTechEquipment_Clicked"/>
                         </StackLayout>
                     </pancake:PancakeView>
+
+                    <pancake:PancakeView CornerRadius="12" x:Name="modalFrameAddTechEquipment" 
+                                         AbsoluteLayout.LayoutFlags="PositionProportional"
+                   AbsoluteLayout.LayoutBounds="0.5,1" HorizontalOptions="FillAndExpand" Padding="0"
+                   IsClippedToBounds="true" IsVisible="false">
+                        <pancake:PancakeView.GestureRecognizers>
+                            <SwipeGestureRecognizer Direction="Left" />
+                        </pancake:PancakeView.GestureRecognizers>
+                        <StackLayout BackgroundColor="White" HorizontalOptions="FillAndExpand">
+                            <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7" HorizontalOptions="FillAndExpand">
+                                <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7" HorizontalOptions="FillAndExpand">
+                                    <Label Text="ID:" TextColor="White" FontFamily="ur" FontSize="22" VerticalOptions="Center"/>
+                                    <Label Text="404" TextColor="White" FontFamily="ur" FontSize="22" x:Name="modalFrameAddTechEquipmentLabelId" 
+                                   VerticalOptions="Center"/>
+                                    <ImageButton Source="res/image/cancel_button.png" WidthRequest="35" 
+                                         HeightRequest="35" CornerRadius="20" Padding="-25" 
+                                         HorizontalOptions="EndAndExpand" BackgroundColor="White"
+                                         Clicked="ImageButton_Clicked_4"/>
+                                </StackLayout>
+                            </StackLayout>
+                            <Entry Visual="Material" TextColor="Black" FontFamily="ur" Placeholder="IP адрес:" x:Name="entryIpAddressAddTechEquipment"/>
+                            <Picker Visual="Material" TextColor="#839BFF" WidthRequest="150" 
+                                        HorizontalTextAlignment="Center" x:Name="pickerTypeTechEquipmentForAdd" 
+                                    SelectedIndexChanged="pickerTypeTechEquipmentForAdd_SelectedIndexChanged">
+                                <Picker.ItemsSource>
+                                    <x:Array Type="{x:Type x:String}">
+                                        <x:String>Компьютер</x:String>
+                                        <x:String>Принтер</x:String>
+                                        <x:String>Камера</x:String>
+                                    </x:Array>
+                                </Picker.ItemsSource>
+                            </Picker>
+                            <Button x:Name="btnAddTechEquipment" Text="Добавить" FontFamily="ur" Margin="10,0,10,10"
+                                BackgroundColor="#839BFF" CornerRadius="10" TextColor="White" Clicked="btnAddTechEquipment_Clicked"/>
+                        </StackLayout>
+                    </pancake:PancakeView>
+
                 </AbsoluteLayout>
             </StackLayout>
         </Frame>

@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="NetEye.pages.userPage" xmlns:local="clr-namespace:NetEye.pages" xmlns:pancake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView">
+             xmlns:converters="clr-namespace:NetEye.res.Converters"
+             x:Class="NetEye.pages.userPage" xmlns:local="clr-namespace:NetEye.pages" 
+             xmlns:pancake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView">
+    <ContentPage.Resources>
+        <converters:NumberToRepairStatusConverter x:Key="NumberToRepairStatusConverter"/>
+    </ContentPage.Resources>
     <Frame Padding="10">
         <Frame.Background>
             <LinearGradientBrush EndPoint="0,1">
@@ -35,7 +40,8 @@
                                 </StackLayout>
                                 <StackLayout Orientation="Horizontal">
                                     <Label Text="Статус:" FontFamily="ur" TextColor="#839BFF"/>
-                                    <Label Text="{Binding Status}" FontFamily="ur" TextColor="Black"/>
+                                    <Label Text="{Binding Status, Converter={StaticResource NumberToRepairStatusConverter}}"
+                                           FontFamily="ur" TextColor="Black"/>
                                 </StackLayout>
                             </StackLayout>
                         </Frame>
