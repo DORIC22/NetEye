@@ -2,7 +2,7 @@
 <TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:pancake="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView"
             xmlns:converters="clr-namespace:NetEye.res.Converters"
-            x:Class="NetEye.pages.techPage" x:Name="tabbedPage" SelectedTabColor="Black" BarBackgroundColor="#839BFF" >
+            x:Class="NetEye.pages.techPage" x:Name="tabbedPage" SelectedTabColor="White" BarBackgroundColor="#839BFF" >
     <TabbedPage.Resources>
         <converters:NumberToRepairStatusConverter x:Key="NumberToRepairStatusConverter"/>
     </TabbedPage.Resources>
@@ -18,15 +18,16 @@
 
             <AbsoluteLayout>
                 <Frame AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.5,0" HorizontalOptions="CenterAndExpand" 
-                       BorderColor="Black" Padding="3" CornerRadius="5">
+                       BorderColor="#839BFF" Padding="3" CornerRadius="5">
                     <StackLayout x:Name="frameSearchRequests" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
                         <Label Text="Поиск:" TextColor="Black" VerticalOptions="Center" FontFamily="ur" FontSize="18"/>
                         <Entry BackgroundColor="White" Placeholder="ID" HorizontalOptions="FillAndExpand" 
                                Visual="Material" WidthRequest="120" FontFamily="ur" MaxLength="50" 
-                               x:Name="entrySearchRequest" TextChanged="entrySearchRequest_TextChanged"/>
+                               x:Name="entrySearchRequest" TextChanged="entrySearchRequest_TextChanged"
+                               ClearButtonVisibility="WhileEditing"/>
                         <Frame Padding="4" HorizontalOptions="FillAndExpand" CornerRadius="10" HasShadow="False" BorderColor="Black" BackgroundColor="#839BFF">
-                            <Picker Title="Статус:" Margin="0,-1" BackgroundColor="#839BFF" WidthRequest="100"
-                                    TextColor="Black" TitleColor="Gray" FontFamily="ur" x:Name="picker_status" SelectedIndexChanged="picker_status_SelectedIndexChanged">
+                            <Picker Title="Статус:" Margin="0,-1" BackgroundColor="#839BFF" WidthRequest="100" HorizontalTextAlignment="Center"
+                                    TextColor="White" TitleColor="Gray" FontFamily="ur" x:Name="picker_status" SelectedIndexChanged="picker_status_SelectedIndexChanged">
                                 <Picker.ItemsSource>
                                     <x:Array Type="{x:Type x:String}">
                                         <x:String>Принята</x:String>
@@ -198,13 +199,14 @@
                 </LinearGradientBrush>
             </Frame.Background>
             <StackLayout>
-                <Frame x:Name="frameSearchTechEquipment" HorizontalOptions="FillAndExpand" Padding="10" HasShadow="False" BorderColor="Black"
+                <Frame x:Name="frameSearchTechEquipment" HorizontalOptions="FillAndExpand" Padding="4" HasShadow="False" BorderColor="#839BFF"
                        CornerRadius="10">
                     <StackLayout Orientation="Horizontal">
                         <Label Text="Поиск:" TextColor="Black" VerticalOptions="Center" FontFamily="ur" FontSize="18"/>
                         <Entry BackgroundColor="White" Placeholder="ID" HorizontalOptions="FillAndExpand" 
                                    Visual="Material" WidthRequest="120" FontFamily="ur" MaxLength="50" 
-                                   x:Name="entrySearchTechEquipment" TextChanged="entrySearchTechEquipment_TextChanged"/>
+                                   x:Name="entrySearchTechEquipment" TextChanged="entrySearchTechEquipment_TextChanged"
+                               ClearButtonVisibility="WhileEditing"/>
                     </StackLayout>
                 </Frame>
                 <AbsoluteLayout>
@@ -215,7 +217,7 @@
                                 <Frame BackgroundColor="#F4F4F3" HasShadow="True" Padding="0" CornerRadius="16" BorderColor="#839BFF">
                                     <StackLayout>
                                         <StackLayout Orientation="Horizontal" BackgroundColor="#839BFF" Padding="8">
-                                            <Label Text="{Binding Id}" FontFamily="ur" TextColor="Black" FontSize="20"
+                                            <Label Text="{Binding Id}" FontFamily="ur" TextColor="White" FontSize="20"
                                                HorizontalOptions="CenterAndExpand"/>
                                         </StackLayout>
                                         <StackLayout Orientation="Horizontal" Padding="5,3">
@@ -232,7 +234,7 @@
                         </CollectionView.ItemTemplate>
                         <CollectionView.ItemsLayout>
                             <LinearItemsLayout Orientation="Vertical" 
-                           ItemSpacing="5"/>
+                           ItemSpacing="10"/>
                         </CollectionView.ItemsLayout>
                     </CollectionView>
                     <pancake:PancakeView CornerRadius="12" x:Name="modalFrameDetailsTechEquipment" AbsoluteLayout.LayoutFlags="PositionProportional"
@@ -288,7 +290,7 @@
                                 </StackLayout>
                             </StackLayout>
                             <Entry Visual="Material" TextColor="Black" FontFamily="ur" Placeholder="IP адрес:" x:Name="entryIpAddressAddTechEquipment"/>
-                            <Picker Visual="Material" TextColor="#839BFF" WidthRequest="150" 
+                            <Picker Visual="Material" TextColor="White" WidthRequest="150"  BackgroundColor="#839BFF" Margin="10,0"
                                         HorizontalTextAlignment="Center" x:Name="pickerTypeTechEquipmentForAdd" 
                                     SelectedIndexChanged="pickerTypeTechEquipmentForAdd_SelectedIndexChanged">
                                 <Picker.ItemsSource>

@@ -89,6 +89,7 @@ namespace NetEye.pages
             fUser = user;
             editorDescriptionRequest.Text = "";
             frameModalAddRequest.WidthRequest = App.Current.MainPage.Width - 20;
+            frameSearchRequests.WidthRequest = App.Current.MainPage.Width - 20;
 
             if (fUser.RepairRequestsSubmitted == null)
             {
@@ -109,7 +110,12 @@ namespace NetEye.pages
         {
             bool answer = await DisplayAlert("Выход", "Вы уверены что хотите выйти?", "Да", "Отмена");
             if (answer)
+            {
+                App.Current.Properties.Remove("email");
+                App.Current.Properties.Remove("password");
+                App.Current.Properties.Remove("rememberMe");
                 await Navigation.PopAsync();
+            }
 
             // дописать стирание данных автовхода
         }

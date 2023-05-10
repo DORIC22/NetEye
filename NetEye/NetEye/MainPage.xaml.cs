@@ -23,6 +23,25 @@ namespace NetEye
             NavigationPage.SetHasNavigationBar(this, false);
 
             _httpClient = HttpClientWithJwt.GetInstance();
+
+            AutomaticAuth();
+        }
+
+        public void AutomaticAuth()
+        {
+            string autAuth = "false";
+
+            try
+            {
+                autAuth = App.Current.Properties["rememberMe"].ToString();
+            } catch(Exception ex) { }
+
+            if ( autAuth == "true" )
+            {
+                entry_Email.Text = App.Current.Properties["email"].ToString();
+                entry_Password.Text = App.Current.Properties["password"].ToString();
+                btn_Auth_Clicked(null, null);
+            }
         }
 
         private async void TapGestureRecognizer_Tapped(object sender, EventArgs e)
@@ -71,6 +90,13 @@ namespace NetEye
                     user = _httpClient.Authorization(entry_Email.Text, entry_Password.Text);
                     if (user != null)
                     {
+                        if (rememberMeCheckBox.IsChecked == true)
+                        {
+                            App.Current.Properties.Add("rememberMe", "true"); 
+                            App.Current.Properties.Add("email", entry_Email.Text);
+                            App.Current.Properties.Add("password", entry_Password.Text);
+                        }                        
+
                         App.Current.Properties.Remove("UserId");
                         App.Current.Properties.Add("UserId", Convert.ToInt32(user.Id)); //Сохраняем id пользователя
                         string userRole = user.Role.ToString();

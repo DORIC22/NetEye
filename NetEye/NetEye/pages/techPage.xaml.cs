@@ -111,7 +111,13 @@ namespace NetEye.pages
         {
             bool answer = await DisplayAlert("Выход", "Вы уверены что хотите выйти?", "Да", "Отмена");
             if (answer)
+            {
+                App.Current.Properties.Remove("email");
+                App.Current.Properties.Remove("password");
+                App.Current.Properties.Remove("rememberMe");
                 await Navigation.PopAsync();
+            }
+                
 
             // дописать стирание данных автовхода
         }
@@ -144,6 +150,8 @@ namespace NetEye.pages
             if (resultScan != null && resultScan != "")
             {
                 equipment = _httpClient.GetTechEquipmentById(resultScan);
+                modalFrameAfterScanning.IsVisible = false;
+                modalFrameAddTechEquipment.IsVisible = false;
                 if (equipment != null)
                 {
                     modalFrameAddRepairRequest.IsVisible = false;
@@ -371,6 +379,8 @@ namespace NetEye.pages
         private async void BtnSadeNewIp_Clicked(object sender, EventArgs e)
         {
             string newIp = await DisplayPromptAsync(selectedTechEquipment.Id, "Введите новый IP:");
+            if (newIp == null)
+                newIp = "";
 
             bool isIPAddres = false;
             Match match = Regex.Match(newIp, @"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
@@ -470,6 +480,8 @@ namespace NetEye.pages
         {
             TechEquipment techEquipment = new TechEquipment();
             techEquipment.Id = modalFrameAddTechEquipmentLabelId.Text;
+            if (entryIpAddressAddTechEquipment.Text == null)
+                entryIpAddressAddTechEquipment.Text = "";
             techEquipment.IpAddress = entryIpAddressAddTechEquipment.Text;
             techEquipment.Type = (TechType)pickerTypeTechEquipmentForAdd.SelectedIndex;
 

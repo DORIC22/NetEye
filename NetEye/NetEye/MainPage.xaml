@@ -36,15 +36,15 @@
                         <StackLayout Padding="10,0" >
                             <Frame Padding="0" CornerRadius="12" BackgroundColor="#F4F4F3">
                                 <Entry BackgroundColor="#F4F4F3" TextColor="Black" Margin="10,0" Visual="Material" ReturnType="Next"
-                                       Text="Tech@yandex.ru" FontFamily="ur" PlaceholderColor="Gray" FontSize="18" Placeholder="Электронная почта" x:Name="entry_Email" MaxLength="100" Keyboard="Email"/>
+                                        FontFamily="ur" PlaceholderColor="Gray" FontSize="18" Placeholder="Электронная почта" x:Name="entry_Email" MaxLength="100" Keyboard="Email"/>
                             </Frame>
                             <Frame Padding="0" CornerRadius="12" Margin="0,5,0,5" BackgroundColor="#F4F4F3">
                                 <Entry BackgroundColor="#F4F4F3" TextColor="Black" Margin="10,0" ReturnType="Done"
-                                       Text="123321" FontFamily="ur" PlaceholderColor="Gray" IsPassword="True" Placeholder="Пароль" x:Name="entry_Password" MaxLength="100" Keyboard="Text"/>
+                                        FontFamily="ur" PlaceholderColor="Gray" IsPassword="True" Placeholder="Пароль" x:Name="entry_Password" MaxLength="100" Keyboard="Text"/>
                             </Frame>
                         </StackLayout>
                         <StackLayout Orientation="Horizontal" Margin="10,-10,10,0" Padding="0">
-                            <CheckBox Visual="Material"/>
+                            <CheckBox Visual="Material" x:Name="rememberMeCheckBox"/>
                             <Label FontFamily="ur" Text="Запомнить меня" TextColor="Black" FontSize="16" VerticalOptions="Center"/>
                         </StackLayout>
                         <Label Text="Нет аккаунта? Подайте заявку на регистрацию" TextColor="#839BFF" HorizontalOptions="Center" TextDecorations="Underline" FontFamily="ur">

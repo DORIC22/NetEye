@@ -17,13 +17,16 @@
 
         <AbsoluteLayout>
 
-            <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                <Label Text="Поиск по ID:" FontFamily="ur" FontSize="18" TextColor="#839BFF" VerticalOptions="Center"/>
-                <Entry TextChanged="Entry_TextChanged" x:Name="searchEntry" 
-                           HorizontalOptions="FillAndExpand" FontSize="18" FontFamily="ur" 
-                       TextColor="Black" PlaceholderColor="Gray" Placeholder="Введите ID техники"/>
-            </StackLayout>
-
+            <Frame AbsoluteLayout.LayoutFlags="PositionProportional" AbsoluteLayout.LayoutBounds="0.5,0" HorizontalOptions="CenterAndExpand" x:Name="frameSearchRequests"
+                       BorderColor="#839BFF" Padding="3" CornerRadius="5">
+                <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand">
+                    <Label Text="Поиск по ID:" FontFamily="ur" FontSize="18" TextColor="#839BFF" VerticalOptions="Center"/>
+                    <Entry TextChanged="Entry_TextChanged" x:Name="searchEntry" 
+                               HorizontalOptions="FillAndExpand" FontSize="18" FontFamily="ur" 
+                           TextColor="Black" PlaceholderColor="Gray" Placeholder="Введите ID техники"
+                           ClearButtonVisibility="WhileEditing"/>
+                </StackLayout>
+            </Frame>
             <CollectionView x:Name="requestsList" SelectionMode="Single" HorizontalOptions="CenterAndExpand" 
                             VerticalOptions="StartAndExpand" Margin="0,60,0,0" SelectionChanged="requestsList_SelectionChanged">
                 <CollectionView.ItemTemplate>
