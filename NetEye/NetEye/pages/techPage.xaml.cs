@@ -419,7 +419,7 @@ namespace NetEye.pages
                 "приведет к удалению связанных с ним заявок.", "Да" , "Нет");
             if (answer)
             {
-                _httpClient.DeleteTechEquipment(selectedTechEquipment);
+                _httpClient.DeleteTechEquipmentById(selectedTechEquipment.Id);
                 techEquipmentList.Remove(selectedTechEquipment);
                 techEquipmentCollection.ItemsSource = null;
                 techEquipmentCollection.ItemsSource = techEquipmentList;

@@ -12,18 +12,18 @@ namespace NetEye.res.service
 {
     public class HttpClientWithJwt
     {
+        #region Fields
+
         private static HttpClientWithJwt _instance;
         private static readonly object Lock = new object();
         private readonly RestClient _httpClient;
         private const string BaseUrl = "http://5.128.221.139:7119/api";
 
-        public string AccessToken { get; private set; }
-        public string RefreshToken { get; private set; }
+        #endregion
 
         private HttpClientWithJwt()
-        {            
+        {
             _httpClient = new RestClient(BaseUrl);
-            //_httpClient.Options.Timeout = 5000;
         }
 
         public static HttpClientWithJwt GetInstance()
@@ -42,131 +42,83 @@ namespace NetEye.res.service
             return _instance;
         }
 
+        #region Users
+
         /// <summary>
         /// Отправляет запрос серверу на аутентификацию. Хэширование пароля выполняется внутри метода.
         /// </summary>
         /// <param name="email">Почта пользователя</param>
         /// <param name="password">Пароль пользователя</param>
-        /// <returns>Возвращает аутентифицированного пользователя. Если сервер не смогу аутентифицировать пользователя метод вернёт null.</returns>
+        /// <returns>Аутентифицированного пользователя. Если сервер не смог аутентифицировать пользователя - null.</returns>
         public AuthUser Authorization(string email, string password)
         {
             var hashPass = GetHash(password);
             var request = new RestRequest("auth");
             request.AddQueryParameter("email", email);
             request.AddQueryParameter("password", hashPass);
-            var response = _httpClient.Get(request);
+            var response = _httpClient.ExecuteGet<AuthUser>(request);
 
-            if (!response.IsSuccessful)
-                return null;
-
-            using (var jsonDocument = JsonDocument.Parse(response.Content))
-            {
-                AccessToken = jsonDocument.RootElement.GetProperty("accessToken").GetString();
-                RefreshToken = jsonDocument.RootElement.GetProperty("refreshToken").GetString();
-            }
-
-            _httpClient.Authenticator = new JwtAuthenticator(AccessToken);
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var user = JsonSerializer.Deserialize<AuthUser>(response.Content, options);
-
-            return user;
+            return !response.IsSuccessful ? null : response.Data;
         }
 
         /// <summary>
-        /// 
+        /// Возвращает пользователя по id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Id интересующего пользователя.</param>
+        /// <returns>Пользователя с укзанным id, если пользователь с таким id не был найден, возвращает null</returns>
         public User GetUserById(int id)
         {
-            var request = new RestRequest($"users/{id}");
-            var response = _httpClient.ExecuteGet<User>(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                return GetUserById(id);
-            }
-
-            return response.Data;
+            var request = new RestRequest($"users/{id}", Method.Get);
+            return ExecuteRequest<User>(request).Item1;
         }
+
+        #endregion
 
         #region RepairRequest
 
         /// <summary>
-        /// 
+        /// Возвращает заявку на ремонт по указанному id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Id интересующей заявки.</param>
+        /// <returns>Заявку на ремонт, если завявка с таким id не найдена, возвращает null.</returns>
         public RepairRequest GetRepairRequestById(int id)
         {
-            var request = new RestRequest($"repairrequest/{id}");
-            var response = _httpClient.ExecuteGet<RepairRequest>(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                return GetRepairRequestById(id);
-            }
-
-            return response.Data;
+            var request = new RestRequest($"repairrequest/{id}", Method.Get);
+            return ExecuteRequest<RepairRequest>(request).Item1;
         }
 
         /// <summary>
-        /// 
+        /// Возвращает список всех заявок на ремонт.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Список всех заявок на ремонт.</returns>
         public List<RepairRequest> GetAllRepairRequest()
         {
-            var request = new RestRequest("repairrequest");
-            var response = _httpClient.ExecuteGet<List<RepairRequest>>(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                return GetAllRepairRequest();
-            }
-
-            return response.Data;
+            var request = new RestRequest("repairrequest", Method.Get);
+            return ExecuteRequest<List<RepairRequest>>(request).Item1;
         }
 
         /// <summary>
-        /// 
+        /// Добавляет новую заявку на ремонт.
         /// </summary>
-        /// <param name="repairRequest"></param>
-        public void PostRepairRequest(RepairRequest repairRequest)
+        /// <param name="repairRequest">Новая заявка.</param>
+        /// <returns>Id добавленной заявки.</returns>
+        public int PostRepairRequest(RepairRequest repairRequest)
         {
-            var request = new RestRequest("repairrequest");
+            var request = new RestRequest("repairrequest", Method.Post);
             request.AddJsonBody(repairRequest);
-            var response = _httpClient.ExecutePost(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                PostRepairRequest(repairRequest);
-            }
+            return ExecuteRequest<int>(request).Item1;
         }
 
         /// <summary>
-        /// 
+        /// Обновляет данные заявки. Можно назанчить исполнителя заявки или изменить статус заявки.
         /// </summary>
-        /// <param name="newRepairRequest"></param>
-        public void PutRepairRequest(RepairRequest newRepairRequest)
+        /// <param name="newRepairRequest">Обновлённая заявка.</param>
+        /// <returns>True, если данные о заявке успешно обновленны, иначе false.</returns>
+        public bool PutRepairRequest(RepairRequest newRepairRequest)
         {
-            var request = new RestRequest("repairrequest");
+            var request = new RestRequest("repairrequest", Method.Put);
             request.AddJsonBody(newRepairRequest);
-            var response = _httpClient.ExecutePut(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                PostRepairRequest(newRepairRequest);
-            }
+            return ExecuteRequest<RepairRequest>(request).Item2;
         }
 
         #endregion
@@ -174,130 +126,85 @@ namespace NetEye.res.service
         #region TechEquipment
 
         /// <summary>
-        /// 
+        /// Возвращает сетевое оборудование по указанному id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Id интересующего оборудования.</param>
+        /// <returns>Сетевое оборудование, если оборудование с таким id не найдено, возвращает null.</returns>
         public TechEquipment GetTechEquipmentById(string id)
         {
-            var request = new RestRequest($"techequipment/{id}");
-            var response = _httpClient.ExecuteGet<TechEquipment>(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                return GetTechEquipmentById(id);
-            }
-
-            return response.Data;
+            var request = new RestRequest($"techequipment/{id}", Method.Get);
+            return ExecuteRequest<TechEquipment>(request).Item1;
         }
 
         /// <summary>
-        /// 
+        /// Возвращает список всего сетевого оборудования.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Список всего сетевого оборудования.</returns>
         public List<TechEquipment> GetAllTechEquipment()
         {
-            var request = new RestRequest("techequipment");
-            var response = _httpClient.ExecuteGet<List<TechEquipment>>(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                return GetAllTechEquipment();
-            }
-
-            return response.Data;
+            var request = new RestRequest("techequipment", Method.Get);
+            return ExecuteRequest<List<TechEquipment>>(request).Item1;
         }
 
         /// <summary>
-        /// 
+        /// Добавляет новое сетевое оборудование.
         /// </summary>
-        /// <param name="techEquipment"></param>
-        public void PostTechEquipment(TechEquipment techEquipment)
+        /// <param name="techEquipment">Новое оборудование.</param>
+        /// <returns>Id созданного оборудования.</returns>
+        public string PostTechEquipment(TechEquipment techEquipment)
         {
-            var request = new RestRequest("techequipment");
+            var request = new RestRequest("techequipment", Method.Post);
             request.AddJsonBody(techEquipment);
-            var response = _httpClient.ExecutePost(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                PostTechEquipment(techEquipment);
-            }
+            return ExecuteRequest<string>(request).Item1;
         }
 
         /// <summary>
-        /// 
+        /// Обновляет ip адресс сетевого оборудования.
         /// </summary>
-        /// <param name="techEquipment"></param>
-        public void PutTechEquipment(TechEquipment techEquipment)
+        /// <param name="techEquipment">Оборудование с обновлённым ip адресом.</param>
+        /// <returns>True, если данные о оборудовании успешно обновленны, иначе false.</returns>
+        public bool PutTechEquipment(TechEquipment techEquipment)
         {
-            var request = new RestRequest("techequipment");
+            var request = new RestRequest("techequipment", Method.Put);
             request.AddJsonBody(techEquipment);
-            var response = _httpClient.ExecutePut(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                PutTechEquipment(techEquipment);
-            }
+            return ExecuteRequest<TechEquipment>(request).Item2;
         }
 
-        public void DeleteTechEquipment(TechEquipment techEquipment)
+        /// <summary>
+        /// Удаляет сетевое оборудование по id.
+        /// </summary>
+        /// <param name="id">Id удаляемого оборудования.</param>
+        /// <returns>True, если оборудование было успешно удаленно, иначе false.</returns>
+        public bool DeleteTechEquipmentById(string id)
         {
-            var request = new RestRequest($"techequipment/{techEquipment.Id}");
-            var response = _httpClient.Delete(request);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized)
-            {
-                UpdateTokens();
-                DeleteTechEquipment(techEquipment);
-            }
+            var request = new RestRequest($"techequipment/{id}", Method.Delete);
+            return ExecuteRequest<TechEquipment>(request).Item2;
         }
 
         #endregion
 
-        #region HttpMethods
+        #region PrivateMethods
 
-        public T Get<T>(RestRequest request)
+        private (T, bool) ExecuteRequest<T>(RestRequest request)
         {
-            return _httpClient.Get<T>(request);
+            var response = _httpClient.Execute<T>(request);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                UpdateTokens();
+                response = _httpClient.Execute<T>(request);
+            }
+
+            return (response.Data, response.IsSuccessful);
         }
-
-        public void Post()
-        {
-
-        }
-
-        public void Put()
-        {
-
-        }
-
-        public void Delete()
-        {
-
-        }
-
-        #endregion
 
         private void UpdateTokens()
         {
             var request = new RestRequest("auth");
-            request.AddJsonBody(new { accessToken = AccessToken, refreshToken = RefreshToken });
             var response = _httpClient.ExecutePut(request);
 
             if (!response.IsSuccessful)
                 throw new Exception("Refresh token is not a valid");
-
-            using (var jsonDoc = JsonDocument.Parse(response.Content))
-            {
-                AccessToken = jsonDoc.RootElement.GetProperty("accessToken").GetString();
-                RefreshToken = jsonDoc.RootElement.GetProperty("refreshToken").GetString();
-            }
-
-            _httpClient.Authenticator = new JwtAuthenticator(AccessToken);
         }
 
         private string GetHash(string inputData)
@@ -317,6 +224,8 @@ namespace NetEye.res.service
                 return builder.ToString().ToLower();
             }
         }
+
+        #endregion
     }
 
 }
