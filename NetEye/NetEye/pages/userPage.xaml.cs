@@ -289,6 +289,16 @@ namespace NetEye.pages
                 await DisplayAlert("Ошибка", ex.ToString(), "Ок");
             }
         }
+
+        private void btnShowSomeReportReason_Clicked(object sender, EventArgs e)
+        {
+            pickerRecommendedReasonForReport.Focus();
+        }
+
+        private void pickerRecommendedReasonForReport_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            editorDescriptionRequest.Text = pickerRecommendedReasonForReport.SelectedItem.ToString();
+        }
     }
 
 }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -16,6 +17,7 @@ namespace NetEye
     public partial class MainPage : ContentPage
     {
         private HttpClientWithJwt _httpClient;
+        AuthUser user = null;
 
         public MainPage()
         {
@@ -61,11 +63,67 @@ namespace NetEye
             return state;
         }
 
+        bool isValidEmail(string email)
+        {
+            string pattern = "[.\\-_a-z0-9]+@([a-z0-9][\\-a-z0-9]+\\.)+[a-z]{2,6}";
+            Match isMatch = Regex.Match(email, pattern, RegexOptions.IgnoreCase);
+            return isMatch.Success;
+        }
+
+        private async void changeUserPassword()
+        {
+            if (entry_Password.Text == "Passw0rd")
+            {
+                string newPassword = await DisplayPromptAsync("Сброс пароля", "Придумайте новый пароль, и введите его в поле ниже:", "Ок", "Отмена", "...");
+
+                if (!string.IsNullOrEmpty(newPassword))
+                {
+                    if (newPassword.Length > 7 && newPassword.Length < 41)
+                    {
+                        string newPasswordAgain = await DisplayPromptAsync("Сброс пароля", "Введите пароль еще раз", "Ок", "Отмена", "...");
+
+                        if (newPassword == newPasswordAgain)
+                        {
+                            // запрос к бд на смену пароля.
+                            _httpClient.PathPassword(user.Id, newPassword);
+
+                            await DisplayAlert("Успешно", "Ваш пароль был успешно изменён.", "Ок");
+                        }
+                        else
+                        {
+                            DependencyService.Get<IToast>().LongToast("Пароли не совпадают");
+                            changeUserPassword();
+                        }
+                    }
+                    else
+                    {
+                        DependencyService.Get<IToast>().LongToast("Некорректная длина пароля");
+                        changeUserPassword();
+                    }
+                }
+                else
+                {
+                    DependencyService.Get<IToast>().LongToast("Поле пароля не может быть пустым");
+                    changeUserPassword();
+                }
+            }
+        }
+
         private async void btn_Auth_Clicked(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(entry_Email.Text) || string.IsNullOrEmpty(entry_Password.Text))
+            bool emailAnswer = false;
+            if (!string.IsNullOrEmpty(entry_Email.Text))
+                emailAnswer = isValidEmail(entry_Email.Text);
+
+            if (!emailAnswer)
             {
-                await DisplayAlert("Не верно заполнены поля", "Пожалуйста, введите почту и пароль", "Ок");
+                await DisplayAlert("Упс", "Введена некорректная почта!", "Ок");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(entry_Password.Text))
+            {
+                await DisplayAlert("Упс", "Введен некорректный пароль!", "Ок");
                 return;
             }
 
@@ -82,7 +140,8 @@ namespace NetEye
             btn_Auth.IsVisible= false;
             #endregion
 
-            AuthUser user = null;
+            bool auth = false;
+            
             await Task.Run(async () =>
             {
                 try
@@ -90,6 +149,8 @@ namespace NetEye
                     user = _httpClient.Authorization(entry_Email.Text, entry_Password.Text);
                     if (user != null)
                     {
+                        auth = true;
+
                         if (rememberMeCheckBox.IsChecked == true)
                         {
                             App.Current.Properties.Add("rememberMe", "true"); 
@@ -149,9 +210,14 @@ namespace NetEye
             btn_Auth.IsVisible = true;
             entry_Email.IsEnabled = true;
             entry_Password.IsEnabled = true;
-            #endregion            
+            #endregion
+
+            #region проверка на Passw0rd (Сброс пароля)
+            if (auth)
+                changeUserPassword();
+            #endregion
         }
 
-        
+
     }
 }

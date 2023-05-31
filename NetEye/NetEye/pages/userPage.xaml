@@ -103,7 +103,7 @@
                 <StackLayout>
                     <StackLayout BackgroundColor="#839BFF">
                         <Label x:Name="labelIdEquipment" HorizontalOptions="Center" Text="404" 
-                               Padding="6" FontFamily="ur" FontSize="24" TextColor="Black"/>
+                               Padding="6" FontFamily="ur" FontSize="24" TextColor="White"/>
                     </StackLayout>
                     <StackLayout Padding="5">
                         <Label Text="Введите описание проблемы:" FontFamily="ur" FontSize="18" TextColor="Black"/>
@@ -111,12 +111,29 @@
                             TextColor="Black" BackgroundColor="White" HeightRequest="100" MaxLength="200" x:Name="editorDescriptionRequest" 
                                 TextChanged="editorDescriptionRequest_TextChanged"/>
                     </StackLayout>
+
+                    <Button x:Name="btnShowSomeReportReason" Clicked="btnShowSomeReportReason_Clicked" Visual="Material" BackgroundColor="#839BFF" 
+                            Margin="10,0" CornerRadius="10" Text="Примеры описания" FontFamily="ur" TextColor="White"/>
+
+                    <Picker IsVisible="false" x:Name="pickerRecommendedReasonForReport" SelectedIndexChanged="pickerRecommendedReasonForReport_SelectedIndexChanged">
+                        <Picker.ItemsSource>
+                            <x:Array Type="{x:Type x:String}">
+                                <x:String>Отсутствует доступ к следующим сетевым ресурсам: </x:String>
+                                <x:String>Некорректная работает программа: </x:String>
+                                <x:String>Компьютер не включается после нажатия на кнопку запуска.</x:String>
+                                <x:String>Требуется установить программу: "" версии "".</x:String>
+                                <x:String>Проблема с входом в учетную запись на компьютере.</x:String>
+                                <x:String>Проблема с печатью/сканированием МФУ.</x:String>
+                            </x:Array>
+                        </Picker.ItemsSource>
+                    </Picker>
+                    
                     <StackLayout Padding="5" Orientation="Horizontal">
                         <Button Text="Отмена" x:Name="btnCancel" Clicked="btnCancel_Clicked" 
-                                FontFamily="ur" BorderColor="Black" BorderWidth="1" 
+                                FontFamily="ur" BorderWidth="1" TextColor="White" 
                                 BackgroundColor="#839BFF" Margin="5,15" CornerRadius="10" HorizontalOptions="Start"/>
                         <Button Text="Отправить" x:Name="btnSend" Clicked="btnSend_Clicked" 
-                                FontFamily="ur" BorderColor="Black" BorderWidth="1" 
+                                FontFamily="ur" BorderWidth="1" TextColor="White"
                                 BackgroundColor="#839BFF" Margin="5, 15" CornerRadius="10" HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
                 </StackLayout>

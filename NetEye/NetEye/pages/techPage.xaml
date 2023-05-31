@@ -289,7 +289,7 @@
                                          Clicked="ImageButton_Clicked_4"/>
                                 </StackLayout>
                             </StackLayout>
-                            <Entry Visual="Material" TextColor="Black" FontFamily="ur" Placeholder="IP адрес:" x:Name="entryIpAddressAddTechEquipment"/>
+                            <Entry Visual="Material" TextColor="Black" FontFamily="ur" Placeholder="IP адрес:" x:Name="entryIpAddressAddTechEquipment" BackgroundColor="white"/>
                             <Picker Visual="Material" TextColor="White" WidthRequest="150"  BackgroundColor="#839BFF" Margin="10,0"
                                         HorizontalTextAlignment="Center" x:Name="pickerTypeTechEquipmentForAdd" 
                                     SelectedIndexChanged="pickerTypeTechEquipmentForAdd_SelectedIndexChanged">

@@ -53,7 +53,7 @@ namespace NetEye.res.service
         public AuthUser Authorization(string email, string password)
         {
             var hashPass = GetHash(password);
-            var request = new RestRequest("auth");
+            var request = new RestRequest("auth/by-credentials");
             request.AddQueryParameter("email", email);
             request.AddQueryParameter("password", hashPass);
             var response = _httpClient.ExecuteGet<AuthUser>(request);
@@ -122,6 +122,21 @@ namespace NetEye.res.service
         }
 
         #endregion
+
+        /// <summary>
+        /// Обновляет пароль пользователя. Хэширование пароля выполняется внутри метода.
+        /// </summary>
+        /// <param name="id">Id пользователя.</param>
+        /// <param name="newPassword">Новый пароль пользователя.</param>
+        /// <returns>True, если пароль был успешно обновлён, иначе false</returns>
+        public bool PathPassword(int id, string newPassword)
+        {
+            var request = new RestRequest("users", Method.Patch);
+            string hashNewPassword = GetHash(newPassword);
+            string hasOldPassword = "ab38eadaeb746599f2c1ee90f8267f31f467347462764a24d71ac1843ee77fe3"; // const Passw0rd
+            request.AddJsonBody(new { id = id, oldPassword = hasOldPassword, newPassword = hashNewPassword });
+            return ExecuteRequest<User>(request).Item2;
+        }
 
         #region TechEquipment
 
