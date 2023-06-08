@@ -65,7 +65,7 @@
                    BackgroundColor="#F4F4F3" Padding="0" Margin="0" CornerRadius="10" >
                 <StackLayout>
                     <StackLayout BackgroundColor="#839BFF">
-                        <Label FontFamily="ur" Text="Сканирование:" TextColor="Black" HorizontalOptions="Center" Padding="3"/>
+                        <Label FontFamily="ur" Text="Сканирование:" TextColor="White" HorizontalOptions="Center" Padding="3"/>
                     </StackLayout>
                     <ImageButton x:Name="btnScan" Clicked="btnScan_Clicked" Padding="-5" CornerRadius="20" BackgroundColor="#839BFF"
                                  VerticalOptions="End" HorizontalOptions="End" Source="res/image/iconQR.png"
@@ -81,9 +81,12 @@
                     <SwipeGestureRecognizer Direction="Left" Swiped="OnSwipeLeft"/>
                 </pancake:PancakeView.GestureRecognizers>
                 <StackLayout BackgroundColor="White">
-                    <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7">
-                        <Label Text="ID: " TextColor="Black" FontFamily="ur" FontSize="18"/>
-                        <Label Text="none" x:Name="modalId" TextColor="Black" FontFamily="ur" FontSize="18"/>
+                    <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7" HorizontalOptions="FillAndExpand">
+                        <Label Text="Ошибка данных" x:Name="modalId" TextColor="White" FontFamily="ur" FontSize="24" VerticalOptions="Center"/>
+                        <ImageButton Source="res/image/cancel_button.png" WidthRequest="35" 
+                                         HeightRequest="35" CornerRadius="20" Padding="-25"  
+                                         HorizontalOptions="EndAndExpand" BackgroundColor="White"
+                                         Clicked="ImageButton_Clicked_1"/>
                     </StackLayout>
                     <StackLayout Padding="10,8" BackgroundColor="White">
                         <Label Text="Ваше описание:" TextColor="Black" FontFamily="ur" FontSize="18"/>
@@ -92,7 +95,7 @@
                     </StackLayout>
                     <StackLayout Padding="10,8" BackgroundColor="White">
                         <Label Text="Пояснение причины отмены:" TextColor="Black" FontFamily="ur" FontSize="18"/>
-                        <Label Text="Отмена по причине попрыженок" x:Name="modalDescriptionCancel" 
+                        <Label Text="не указана" x:Name="modalDescriptionCancel" 
                                TextColor="Black" FontFamily="ur" FontSize="14"/>
                     </StackLayout>
                 </StackLayout>
@@ -101,9 +104,13 @@
             <Frame BackgroundColor="White" AbsoluteLayout.LayoutFlags="PositionProportional" IsVisible="false"
                    AbsoluteLayout.LayoutBounds="0.5,1" Padding="0" CornerRadius="10" x:Name="frameModalAddRequest">
                 <StackLayout>
-                    <StackLayout BackgroundColor="#839BFF">
-                        <Label x:Name="labelIdEquipment" HorizontalOptions="Center" Text="404" 
+                    <StackLayout BackgroundColor="#839BFF" Orientation="Horizontal" Padding="7" HorizontalOptions="FillAndExpand">
+                        <Label x:Name="labelIdEquipment" HorizontalOptions="Start" Text="404" 
                                Padding="6" FontFamily="ur" FontSize="24" TextColor="White"/>
+                        <ImageButton Source="res/image/cancel_button.png" WidthRequest="40" 
+                                         HeightRequest="35" CornerRadius="20" Padding="-25"  
+                                         HorizontalOptions="EndAndExpand" BackgroundColor="White"
+                                         Clicked="ImageButton_Clicked"/>
                     </StackLayout>
                     <StackLayout Padding="5">
                         <Label Text="Введите описание проблемы:" FontFamily="ur" FontSize="18" TextColor="Black"/>
@@ -112,8 +119,7 @@
                                 TextChanged="editorDescriptionRequest_TextChanged"/>
                     </StackLayout>
 
-                    <Button x:Name="btnShowSomeReportReason" Clicked="btnShowSomeReportReason_Clicked" Visual="Material" BackgroundColor="#839BFF" 
-                            Margin="10,0" CornerRadius="10" Text="Примеры описания" FontFamily="ur" TextColor="White"/>
+                    
 
                     <Picker IsVisible="false" x:Name="pickerRecommendedReasonForReport" SelectedIndexChanged="pickerRecommendedReasonForReport_SelectedIndexChanged">
                         <Picker.ItemsSource>
@@ -128,13 +134,20 @@
                         </Picker.ItemsSource>
                     </Picker>
                     
-                    <StackLayout Padding="5" Orientation="Horizontal">
-                        <Button Text="Отмена" x:Name="btnCancel" Clicked="btnCancel_Clicked" 
-                                FontFamily="ur" BorderWidth="1" TextColor="White" 
-                                BackgroundColor="#839BFF" Margin="5,15" CornerRadius="10" HorizontalOptions="Start"/>
+                    <StackLayout Padding="5" Orientation="Horizontal" >
+                        <Button x:Name="btnShowSomeReportReason" Clicked="btnShowSomeReportReason_Clicked" Visual="Material" BackgroundColor="#839BFF" 
+                            Margin="5,15" CornerRadius="10" Text="Примеры описания" FontFamily="ur" TextColor="White" HorizontalOptions="StartAndExpand"/>
                         <Button Text="Отправить" x:Name="btnSend" Clicked="btnSend_Clicked" 
                                 FontFamily="ur" BorderWidth="1" TextColor="White"
-                                BackgroundColor="#839BFF" Margin="5, 15" CornerRadius="10" HorizontalOptions="EndAndExpand"/>
+                                 Margin="5, 15" CornerRadius="10" HorizontalOptions="FillAndExpand">
+                            <Button.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#839BFF" Offset="0" />
+                                    <GradientStop Color="#536AD3" Offset="1" />
+                                </LinearGradientBrush>
+                            </Button.Background>
+                            
+                        </Button>
                     </StackLayout>
                 </StackLayout>
             </Frame>

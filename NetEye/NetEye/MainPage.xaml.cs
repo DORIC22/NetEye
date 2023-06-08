@@ -78,7 +78,7 @@ namespace NetEye
 
                 if (!string.IsNullOrEmpty(newPassword))
                 {
-                    if (newPassword.Length > 7 && newPassword.Length < 41)
+                    if (CheckPasswordComplexity(newPassword))
                     {
                         string newPasswordAgain = await DisplayPromptAsync("Сброс пароля", "Введите пароль еще раз", "Ок", "Отмена", "...");
 
@@ -97,7 +97,7 @@ namespace NetEye
                     }
                     else
                     {
-                        DependencyService.Get<IToast>().LongToast("Некорректная длина пароля");
+                        DependencyService.Get<IToast>().LongToast("Придумайте более сложный пароль");
                         changeUserPassword();
                     }
                 }
@@ -108,6 +108,50 @@ namespace NetEye
                 }
             }
         }
+
+        public bool CheckPasswordComplexity(string password)
+        {
+            if (string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
+
+            if (password == "Passw0rd")
+            {
+                return false;
+            }
+
+            if (password.Length < 8)
+            {
+                // Пароль слишком короткий
+                return false;
+            }
+
+            bool hasDigit = false;
+            bool hasLetter = false;
+
+            foreach (char c in password)
+            {
+                if (Char.IsDigit(c))
+                {
+                    hasDigit = true;
+                }
+                else if (Char.IsLetter(c))
+                {
+                    hasLetter = true;
+                }
+
+                if (hasDigit && hasLetter)
+                {
+                    // Пароль удовлетворяет всем требованиям
+                    return true;
+                }
+            }
+
+            // Пароль не содержит как минимум одну цифру и одну букву
+            return false;
+        }
+
 
         private async void btn_Auth_Clicked(object sender, EventArgs e)
         {

@@ -299,6 +299,18 @@ namespace NetEye.pages
         {
             editorDescriptionRequest.Text = pickerRecommendedReasonForReport.SelectedItem.ToString();
         }
+
+        private void ImageButton_Clicked(object sender, EventArgs e)
+        {
+            frameModalAddRequest.IsVisible=false;
+        }
+
+        private void ImageButton_Clicked_1(object sender, EventArgs e)
+        {
+            
+            modalFrame.IsVisible=false;
+            frameBtnScan.IsVisible=true;
+        }
     }
 
 }
