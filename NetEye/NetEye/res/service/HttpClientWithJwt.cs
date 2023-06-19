@@ -17,7 +17,7 @@ namespace NetEye.res.service
         private static HttpClientWithJwt _instance;
         private static readonly object Lock = new object();
         private readonly RestClient _httpClient;
-        private const string BaseUrl = "http://5.128.221.139:7119/api";
+        private const string BaseUrl = "http://192.168.1.100:7119/api";
 
         #endregion
 

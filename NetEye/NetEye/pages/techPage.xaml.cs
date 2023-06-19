@@ -116,10 +116,7 @@ namespace NetEye.pages
                 App.Current.Properties.Remove("password");
                 App.Current.Properties.Remove("rememberMe");
                 await Navigation.PopAsync();
-            }
-                
-
-            // дописать стирание данных автовхода
+            }           
         }
 
         private async void ContentPage_Appearing(object sender, EventArgs e)
